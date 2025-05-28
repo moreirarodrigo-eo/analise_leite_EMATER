@@ -29,10 +29,22 @@ fig1 = px.scatter_mapbox(
 )
 
 
+import plotly.express as px
 
+fig_boxplot = px.box(
+    media_geral,
+    x="Ano",
+    y="Informação_float",
+    points="all",  # shows all points
+    labels={"Informação_float": "(L/dia/vaca)", "Ano": "Ano"},
+    color="Ano",  # optional, for coloring by year
+    width=1200,
+    height=800
+)
 
 
 st.plotly_chart(fig1, use_container_width=True, config={"scrollZoom": True})
+st.plotly_chart(fig_boxplot, use_container_width=True)
 
 # Estatísticas do primeiro mapa
 st.subheader("Estatísticas Gerais da Produtividade")
