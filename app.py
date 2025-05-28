@@ -10,7 +10,7 @@ st.title("Mapa de Produtividade de Leite por Vaca")
 def load_data_media_geral():
     return gpd.read_file("data/STREAMLIT_media_leite_dia_Vaca_POR_TipoCapim_por_geom.geojson")
 gdf_geral = gpd.read_file("data/STREAMLIT_media_leite_dia_Vaca_POR_TipoCapim_por_geom.geojson")
-mean_by_year = gdf_geral.groupby("Ano")["Produtividade (leite/dia/Vaca)"].mean().reset_index()
+mean_by_year = gdf_geral.groupby("Ano")["Produtividade (leite/dia/Vaca)"].mean().reset_index() 
 
 # Plot 1
 # Plot 1
