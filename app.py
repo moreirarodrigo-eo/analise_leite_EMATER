@@ -10,9 +10,9 @@ st.title("Mapa de Produtividade de Leite por Vaca")
 def load_data_media_geral():
     return gpd.read_file("data/STREAMLIT_media_leite_dia_Vaca_por_geom.geojson")
 gdf_geral = gpd.read_file("data/STREAMLIT_media_leite_dia_Vaca_por_geom.geojson")
-mean_by_year = gdf_geral.groupby(["Ano", "geometry"])["Informação_float"].mean().reset_index() 
+mean_by_year = gdf_geral.groupby(["Ano", "geometry", "lat", "lon"])["Informação_float"].mean().reset_index() 
 mean_by_year = gpd.GeoDataFrame(mean_by_year, geometry = "geometry", crs = "EPSG:4326")
-# Plot 1
+
 # Plot 1
 fig1 = px.scatter_mapbox(
     mean_by_year,
