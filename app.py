@@ -8,7 +8,7 @@ st.title("Mapa de Produtividade de Leite por Vaca")
 # Load GeoDataFrame 1
 @st.cache_data
 def load_data_media_geral():
-    return gpd.read_file("data/STREAMLIT_media_leite_dia_Vaca_por_geom.geojson")
+    return gpd.read_file("STREAMLIT_media_leite_dia_Vaca_por_geom.geojson")
 
 media_geral = load_data_media_geral()
 
@@ -45,10 +45,10 @@ st.markdown(f"""
 
 st.title("Mapa de Produtividade por Tipo de Pasto")
 
-# Load GeoDataFrame 2 
+# Load GeoDataFrame 2
 @st.cache_data
 def load_data_por_tipo_pasto():
-    return gpd.read_file("data/STREAMLIT_media_leite_dia_Vaca_POR_TipoCapim_por_geom.geojson")
+    return gpd.read_file("STREAMLIT_media_leite_dia_Vaca_POR_TipoCapim_por_geom.geojson")
 
 media_tipo_pasto = load_data_por_tipo_pasto()
 
@@ -95,4 +95,3 @@ st.markdown(f"""
 - **Valor máximo:** {valor_maximo:.2f} L/dia/vaca (Capim: **{capim_maximo}**)  
 - **Média:** {media_valor:.2f} L/dia/vaca (Capim mais próximo da média: **{capim_mais_proximo_media}**)
 """)
-
