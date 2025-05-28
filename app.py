@@ -26,7 +26,7 @@ fig1 = px.scatter_mapbox(
     mapbox_style="carto-positron",
     width=1200,
     height=800,
-    labels={"Informação_float": "(L/dia/vaca)"}
+    labels={"Produtividade (leite/dia/Vaca)": "(L/dia/vaca)"}
 )
 
 
