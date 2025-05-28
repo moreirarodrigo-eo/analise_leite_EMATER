@@ -45,7 +45,7 @@ st.markdown(f"""
 
 st.title("Mapa de Produtividade por Tipo de Pasto")
 
-# Load GeoDataFrame 2
+# Load GeoDataFrame 2 
 @st.cache_data
 def load_data_por_tipo_pasto():
     return gpd.read_file("data/STREAMLIT_media_leite_dia_Vaca_POR_TipoCapim_por_geom.geojson")
