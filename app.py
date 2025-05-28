@@ -31,20 +31,21 @@ fig1 = px.scatter_mapbox(
 
 import plotly.express as px
 
-fig_boxplot = px.box(
+fig_violin = px.violin(
     media_geral,
     x="Ano",
     y="Informação_float",
-    points="all",  # shows all points
-    labels={"Informação_float": "(L/dia/vaca)", "Ano": "Ano"},
-    color="Ano",  # optional, for coloring by year
+    box=True,       # adds a mini boxplot inside the violin
+    points="all",   # shows all individual points
+    color="Ano",    # optionally color by year
     width=1200,
-    height=800
+    height=800,
+    labels={"Informação_float": "(L/dia/vaca)", "Ano": "Ano"}
 )
 
 
 st.plotly_chart(fig1, use_container_width=True, config={"scrollZoom": True})
-st.plotly_chart(fig_boxplot, use_container_width=True)
+st.plotly_chart(fig_violin, use_container_width=True)
 
 # Estatísticas do primeiro mapa
 st.subheader("Estatísticas Gerais da Produtividade")
@@ -82,9 +83,24 @@ fig2 = px.scatter_mapbox(
     },
     title="Produtividade de Leite por Variedade de Capim ao Longo dos Anos"
 )
-
+fig_violin2 = px.violin(
+    media_tipo_pasto,
+    x="Variedade de Capim utilizada",
+    y="Produtividade (leite/dia/Vaca)",
+    box=True,       # adds a mini boxplot inside the violin
+    points="all",   # shows all individual points
+    color="Variedade de Capim utilizada",  # optional: color by grass variety
+    width=1200,
+    height=800,
+    labels={
+        "Produtividade (leite/dia/Vaca)": "(L/dia/vaca)",
+        "Variedade de Capim utilizada": "Variedade de Capim"
+    },
+    title="Distribuição da Produtividade de Leite por Variedade de Capim"
+)
 
 st.plotly_chart(fig2, use_container_width=True, config={"scrollZoom": True})
+st.plotly_chart(fig_violin2, use_container_width=True)
 
 # Estatísticas do segundo mapa
 st.subheader("Estatísticas por Tipo de Capim")
