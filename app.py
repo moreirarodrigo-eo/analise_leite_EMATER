@@ -9,9 +9,7 @@ st.title("Mapa de Produtividade de Leite por Vaca")
 @st.cache_data
 def load_data_media_geral():
     return gpd.read_file("data/STREAMLIT_media_leite_dia_Vaca_por_geom.geojson")
-gdf_geral = gpd.read_file("data/STREAMLIT_media_leite_dia_Vaca_por_geom.geojson")
 
-# Plot 1
 fig1 = px.scatter_mapbox(
     gdf_geral,
     lat="lat",
@@ -19,13 +17,16 @@ fig1 = px.scatter_mapbox(
     color="Informação_float",
     size="Informação_float",
     color_continuous_scale=px.colors.sequential.Viridis,
+    range_color=[gdf_geral["Informação_float"].min(), gdf_geral["Informação_float"].max()],
     size_max=15,
     zoom=6,
     mapbox_style="carto-positron",
     width=1200,
     height=800,
     labels={"Informação_float": "(L/dia/vaca)", "Ano": "Ano"},
-    animation_frame="Ano"  # Add this line
+    animation_frame="Ano",
+    hover_name="nome" if "nome" in gdf_geral.columns else None,
+    title="Produtividade média de leite por localização e ano"
 )
 
 
