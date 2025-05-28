@@ -9,12 +9,13 @@ st.title("Mapa de Produtividade de Leite por Vaca")
 @st.cache_data
 def load_data_media_geral():
     return gpd.read_file("data/STREAMLIT_media_leite_dia_Vaca_por_geom.geojson")
-media_geral = gpd.read_file("data/STREAMLIT_media_leite_dia_Vaca_por_geom.geojson")
+gdf_geral = gpd.read_file("data/STREAMLIT_media_leite_dia_Vaca_por_geom.geojson")
+mean_by_year = gdf_geral.groupby("Ano")["Produtividade (leite/dia/Vaca)"].mean().reset_index()
 
 # Plot 1
 # Plot 1
 fig1 = px.scatter_mapbox(
-    media_geral,
+    mean_by_year,
     lat="lat",
     lon="lon",
     color="Informação_float",
@@ -31,7 +32,7 @@ fig1 = px.scatter_mapbox(
 
 
 fig_violin = px.violin(
-    media_geral,
+    mean_by_year,
     x="Ano",
     y="Informação_float",
     box=True,       # adds a mini boxplot inside the violin
