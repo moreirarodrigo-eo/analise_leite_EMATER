@@ -29,7 +29,6 @@ fig1 = px.scatter_mapbox(
 )
 
 
-import plotly.express as px
 
 fig_violin = px.violin(
     media_geral,
