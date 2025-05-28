@@ -18,15 +18,15 @@ fig1 = px.scatter_mapbox(
     mean_by_year,
     lat="lat",
     lon="lon",
-    color="Produtividade (leite/dia/Vaca)",
-    size="Produtividade (leite/dia/Vaca)",
+    color="Informação_float",
+    size="Informação_float",
     color_continuous_scale=px.colors.sequential.Viridis,
     size_max=15,
     zoom=6,
     mapbox_style="carto-positron",
     width=1200,
     height=800,
-    labels={"Produtividade (leite/dia/Vaca)": "(L/dia/vaca)"}
+    labels={"Informação_float": "(L/dia/vaca)"}
 )
 
 
@@ -34,13 +34,13 @@ fig1 = px.scatter_mapbox(
 fig_violin = px.violin(
     mean_by_year,
     x="Ano",
-    y="Produtividade (leite/dia/Vaca)",
+    y="Informação_float",
     box=True,       # adds a mini boxplot inside the violin
     points="all",   # shows all individual points
     color="Ano",    # optionally color by year
     width=1200,
     height=800,
-    labels={"Produtividade (leite/dia/Vaca)": "(L/dia/vaca)", "Ano": "Ano"}
+    labels={"Informação_float": "(L/dia/vaca)", "Ano": "Ano"}
 )
 
 
@@ -50,8 +50,8 @@ st.plotly_chart(fig_violin, use_container_width=True)
 # Estatísticas do primeiro mapa
 st.subheader("Estatísticas Gerais da Produtividade")
 st.markdown(f"""
-- **Valor máximo:** {media_geral['Produtividade (leite/dia/Vaca)'].max():.2f} L/dia/vaca  
-- **Média:** {media_geral['Produtividade (leite/dia/Vaca)'].mean():.2f} L/dia/vaca
+- **Valor máximo:** {media_geral['Informação_float'].max():.2f} L/dia/vaca  
+- **Média:** {media_geral['Informação_float'].mean():.2f} L/dia/vaca
 """)
 
 
