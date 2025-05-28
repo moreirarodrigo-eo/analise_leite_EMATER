@@ -83,6 +83,8 @@ fig2 = px.scatter_mapbox(
         'lat': False,
         'lon': False
     },
+    
+    animation_frame="Ano",
     title="Produtividade de Leite por Variedade de Capim ao Longo dos Anos"
 )
 fig_violin2 = px.violin(
