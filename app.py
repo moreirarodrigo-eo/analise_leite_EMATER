@@ -34,7 +34,7 @@ fig1 = px.scatter_mapbox(
 
 
 fig_violin = px.violin(
-    mean_by_year,
+    gdf_geral,
     x="Ano",
     y="Informação_float",
     box=True,       # adds a mini boxplot inside the violin
@@ -52,8 +52,8 @@ st.plotly_chart(fig_violin, use_container_width=True)
 # Estatísticas do primeiro mapa
 st.subheader("Estatísticas Gerais da Produtividade")
 st.markdown(f"""
-- **Valor máximo:** {media_geral['Informação_float'].max():.2f} L/dia/vaca  
-- **Média:** {media_geral['Informação_float'].mean():.2f} L/dia/vaca
+- **Valor máximo:** {gdf_geral['Informação_float'].max():.2f} L/dia/vaca  
+- **Média:** {gdf_geral['Informação_float'].mean():.2f} L/dia/vaca
 """)
 
 
