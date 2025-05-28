@@ -50,7 +50,7 @@ st.title("Mapa de Produtividade por Tipo de Pasto")
 def load_data_por_tipo_pasto():
     return gpd.read_file("data/STREAMLIT_media_leite_dia_Vaca_POR_TipoCapim_por_geom.geojson")
 
-media_tipo_pasto = load_data_por_tipo_pasto()
+media_tipo_pasto = gpd.read_file("data/STREAMLIT_media_leite_dia_Vaca_POR_TipoCapim_por_geom.geojson")
 
 # Create second figure
 fig2 = px.scatter_mapbox(
