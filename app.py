@@ -4,7 +4,7 @@ import plotly.express as px
 
 st.set_page_config(layout="wide")
 st.title("Mapa de Produtividade de Leite por Vaca")
-st.subtitle("Análises realizadas com dados providos pela EMATER - RO")
+st.subheader("Análises realizadas com dados providos pela EMATER - RO")
 
 # Load GeoDataFrame 1
 @st.cache_data
