@@ -7,6 +7,8 @@ st.title("Mapa de Produtividade de Leite por Vaca")
 
 # Load GeoDataFrame 1
 @st.cache_data
+def load_data_media_geral():
+    return gpd.read_file("STREAMLIT_media_leite_dia_Vaca_por_geom.geojson")
 media_geral = gpd.read_file("data/STREAMLIT_media_leite_dia_Vaca_por_geom.geojson")
 
 # Plot 1
