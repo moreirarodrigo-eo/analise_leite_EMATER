@@ -10,6 +10,8 @@ st.title("Mapa de Produtividade de Leite por Vaca")
 def load_data_media_geral():
     return gpd.read_file("data/STREAMLIT_media_leite_dia_Vaca_por_geom.geojson")
 
+gdf_geral = gpd.read_file("data/STREAMLIT_media_leite_dia_Vaca_por_geom.geojson")
+
 fig1 = px.scatter_mapbox(
     gdf_geral,
     lat="lat",
