@@ -52,20 +52,31 @@ fig1 = px.scatter_mapbox(
     title="Produtividade média de leite por localização e ano"
 )
 
-# Add pedology layer (as fill)
-fig1.add_trace(go.Choroplethmapbox(
-    geojson=pedology_json,
-    locations=gdf_pedo.index,
-    z=[1]*len(gdf_pedo),  # Dummy value
-    colorscale=[[0, 'rgba(0,0,0,0)'], [1, 'rgba(0,0,0,0)']],  # Fully transparent fill
-    showscale=False,
-    marker_opacity=0,  # Fully transparent
-    marker_line_width=1,
-    marker_line_color='white',  # White outline
-    hovertemplate="<b>Ordem</b>: %{customdata[0]}<br><b>Subordem</b>: %{customdata[1]}<extra></extra>",
-    customdata=gdf_pedo[['ordem', 'subordem']],
-    name="Pedologia"
-))
+gdf_pedo_outline = gdf_pedo.copy()
+gdf_pedo_outline['geometry'] = gdf_pedo_outline.geometry.boundary
+scatter_data = []
+
+for _, row in gdf_pedo_outline.iterrows():
+    x, y = row.geometry.xy if row.geometry.geom_type == 'LineString' else ([], [])
+    if not x:  # For MultiLineString
+        for geom in row.geometry.geoms:
+            x += list(geom.xy[0]) + [None]
+            y += list(geom.xy[1]) + [None]
+    else:
+        x = list(x) + [None]
+        y = list(y) + [None]
+
+    scatter_data.append(go.Scattermapbox(
+        lon=x,
+        lat=y,
+        mode="lines",
+        line=dict(color="white", width=1),
+        name="Pedologia",
+        hoverinfo="text",
+        text=f"<b>Ordem</b>: {row['ordem']}<br><b>Subordem</b>: {row['subordem']}"
+    ))
+for trace in scatter_data:
+    fig1.add_trace(trace)
 
 fig1.update_layout(
     mapbox_style="satellite",
