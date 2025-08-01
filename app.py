@@ -154,6 +154,7 @@ fig2 = px.scatter_mapbox(
     animation_frame="Ano",
     title="Produtividade de Leite por Variedade de Capim ao Longo dos Anos"
 )
+fig2.update_traces(marker=dict(opacity=1))
 
 lons, lats, texts = [], [], []
 
