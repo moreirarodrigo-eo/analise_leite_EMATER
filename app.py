@@ -7,6 +7,7 @@ import plotly.graph_objects as go
 import json
 from shapely.geometry import MultiLineString, LineString
 
+
 st.set_page_config(layout="wide")
 st.title("Mapa de Produtividade de Leite por Vaca")
 st.subheader("Análises realizadas com dados providos pela EMATER - RO")
@@ -43,8 +44,6 @@ fig1 = px.scatter_mapbox(
     range_color=[gdf_geral["Informação_float"].min(), gdf_geral["Informação_float"].max()],
     size_max=15,
     zoom=6,
-    # mapbox_style= 'satellite',
-    # mapbox_accesstoken= 'pk.eyJ1IjoibW9yZWlyYXJtdCIsImEiOiJjbTB2NDJ3bDUxZHJzMnJvaXFweTlkY3dnIn0.FSsv6xI9v6xheVcQkCoCjw',
     width=1200,
     height=800,
     labels={"Informação_float": "(L/dia/vaca)", "Ano": "Ano"},
@@ -55,26 +54,28 @@ fig1 = px.scatter_mapbox(
 
 gdf_pedo_outline = gdf_pedo.copy()
 gdf_pedo_outline['geometry'] = gdf_pedo_outline.geometry.boundary
-from shapely.geometry import MultiLineString, LineString
 
 lons, lats, texts = [], [], []
 
 for _, row in gdf_pedo_outline.iterrows():
     geom = row.geometry
     ordem = row["ordem"] if "ordem" in row else ""
+    subordem = row["subordem"] if "ordem" in row else ""
 
     if isinstance(geom, LineString):
         xs, ys = geom.xy
         lons += list(xs) + [None]
         lats += list(ys) + [None]
-        texts += [f"Ordem: {ordem}"] * len(xs) + [None]
+        texts += [f"Ordem: {row['ordem']}<br>Subordem: {row['subordem']}"] * len(xs) + [None]
+
 
     elif isinstance(geom, MultiLineString):
         for part in geom.geoms:
             xs, ys = part.xy
             lons += list(xs) + [None]
             lats += list(ys) + [None]
-            texts += [f"Ordem: {ordem}"] * len(xs) + [None]
+            texts += [f"Ordem: {row['ordem']}<br>Subordem: {row['subordem']}"] * len(xs) + [None]
+
 
 fig1.add_trace(go.Scattermapbox(
     lon=lons,
@@ -154,13 +155,35 @@ fig2 = px.scatter_mapbox(
     title="Produtividade de Leite por Variedade de Capim ao Longo dos Anos"
 )
 
-# Add pedology layer (as fill)
+lons, lats, texts = [], [], []
+
+for _, row in gdf_pedo_outline.iterrows():
+    geom = row.geometry
+    ordem = row["ordem"] if "ordem" in row else ""
+    subordem = row["subordem"] if "ordem" in row else ""
+
+    if isinstance(geom, LineString):
+        xs, ys = geom.xy
+        lons += list(xs) + [None]
+        lats += list(ys) + [None]
+        texts += [f"Ordem: {row['ordem']}<br>Subordem: {row['subordem']}"] * len(xs) + [None]
+
+
+    elif isinstance(geom, MultiLineString):
+        for part in geom.geoms:
+            xs, ys = part.xy
+            lons += list(xs) + [None]
+            lats += list(ys) + [None]
+            texts += [f"Ordem: {row['ordem']}<br>Subordem: {row['subordem']}"] * len(xs) + [None]
+
+
 fig2.add_trace(go.Scattermapbox(
     lon=lons,
     lat=lats,
     mode="lines",
     line=dict(color="white", width=0.05),
-    hoverinfo="ordem",  # Optional: to speed up further
+    hoverinfo="text",
+    text=texts,
     name="Pedologia"
 ))
 
