@@ -42,7 +42,8 @@ fig1 = px.scatter_mapbox(
     range_color=[gdf_geral["Informação_float"].min(), gdf_geral["Informação_float"].max()],
     size_max=15,
     zoom=6,
-    # mapbox_style="satellite",
+    mapbox_style="streets",
+    mapbox_accesstoken="pk.eyJ1IjoibW9yZWlyYXJtdCIsImEiOiJjbTB2NDJ3bDUxZHJzMnJvaXFweTlkY3dnIn0.FSsv6xI9v6xheVcQkCoCjw",
     width=1200,
     height=800,
     labels={"Informação_float": "(L/dia/vaca)", "Ano": "Ano"},
@@ -65,18 +66,18 @@ fig1.add_trace(go.Choroplethmapbox(
     
 ))
 
-fig1.update_layout(
-    mapbox_style="white-bg",
-    mapbox_layers=[
-        {
-            "below": 'traces',
-            "sourcetype": "raster",
-            "sourceattribution": "United States Geological Survey",
-            "source": [
-                "https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer/tile/{z}/{y}/{x}"
-            ]
-        }
-      ])
+# fig1.update_layout(
+#     mapbox_style="white-bg",
+#     mapbox_layers=[
+#         {
+#             "below": 'traces',
+#             "sourcetype": "raster",
+#             "sourceattribution": "United States Geological Survey",
+#             "source": [
+#                 "https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer/tile/{z}/{y}/{x}"
+#             ]
+#         }
+#       ])
 
 st.plotly_chart(fig1, use_container_width=True, config={"scrollZoom": True})
 
