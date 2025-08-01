@@ -61,24 +61,31 @@ lons, lats, texts = [], [], []
 
 for _, row in gdf_pedo_outline.iterrows():
     geom = row.geometry
+    ordem = row["ordem"] if "ordem" in row else ""
+
     if isinstance(geom, LineString):
         xs, ys = geom.xy
         lons += list(xs) + [None]
         lats += list(ys) + [None]
+        texts += [f"Ordem: {ordem}"] * len(xs) + [None]
+
     elif isinstance(geom, MultiLineString):
         for part in geom.geoms:
             xs, ys = part.xy
             lons += list(xs) + [None]
             lats += list(ys) + [None]
+            texts += [f"Ordem: {ordem}"] * len(xs) + [None]
 
 fig1.add_trace(go.Scattermapbox(
     lon=lons,
     lat=lats,
     mode="lines",
     line=dict(color="white", width=0.05),
-    hoverinfo="ordem",  # Optional: to speed up further
+    hoverinfo="text",
+    text=texts,
     name="Pedologia"
 ))
+
 
 fig1.update_layout(
     mapbox_style="satellite",
