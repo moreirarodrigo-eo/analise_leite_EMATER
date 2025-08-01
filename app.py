@@ -31,9 +31,6 @@ gdf_pedo = load_pedologia()
 pedology_json = json.loads(gdf_pedo.to_json())
 
 
-px.set_mapbox_access_token(open(".mapbox_token").read())
-
-
 # Mapa 1: Produtividade geral
 fig1 = px.scatter_mapbox(
     gdf_geral,
