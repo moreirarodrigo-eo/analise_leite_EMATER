@@ -75,7 +75,7 @@ fig1.add_trace(go.Scattermapbox(
     lon=lons,
     lat=lats,
     mode="lines",
-    line=dict(color="white", width=0.5),
+    line=dict(color="white", width=0.2),
     hoverinfo="skip",  # Optional: to speed up further
     name="Pedologia"
 ))
@@ -148,15 +148,12 @@ fig2 = px.scatter_mapbox(
 )
 
 # Add pedology layer (as fill)
-fig2.add_trace(go.Choroplethmapbox(
-    geojson=pedology_json,
-    locations=gdf_pedo.index,
-    z=[1]*len(gdf_pedo),
-    showscale=False,
-    marker_opacity=0.3,
-    marker_line_width=0.5,
-    hovertemplate="<b>Ordem</b>: %{customdata[0]}<br><b>Subordem</b>: %{customdata[1]}<extra></extra>",
-    customdata=gdf_pedo[['ordem', 'subordem']],
+fig2.add_trace(go.Scattermapbox(
+    lon=lons,
+    lat=lats,
+    mode="lines",
+    line=dict(color="white", width=0.2),
+    hoverinfo="skip",  # Optional: to speed up further
     name="Pedologia"
 ))
 
