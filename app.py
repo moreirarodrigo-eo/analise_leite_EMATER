@@ -75,7 +75,7 @@ fig1.add_trace(go.Scattermapbox(
     lon=lons,
     lat=lats,
     mode="lines",
-    line=dict(color="white", width=1),
+    line=dict(color="white", width=0.5),
     hoverinfo="skip",  # Optional: to speed up further
     name="Pedologia"
 ))
