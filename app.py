@@ -2,14 +2,13 @@ import streamlit as st
 import geopandas as gpd
 import plotly.express as px
 import plotly.graph_objects as go
+import json
 
 st.set_page_config(layout="wide")
 st.title("Mapa de Produtividade de Leite por Vaca")
 st.subheader("Análises realizadas com dados providos pela EMATER - RO")
 
-# ------------------------
 # Load Data
-# ------------------------
 @st.cache_data
 def load_data_media_geral():
     return gpd.read_file("data/STREAMLIT_media_leite_dia_Vaca_por_geom.geojson")
@@ -26,47 +25,10 @@ gdf_geral = load_data_media_geral()
 media_tipo_pasto = load_data_media_pasto()
 gdf_pedo = load_pedologia()
 
-# ------------------------
-# Utility: Get Pedologia Traces
-# ------------------------
-def get_pedologia_outline_trace(gdf_pedo):
-    pedo_trace = []
+# Convert to GeoJSON string for Choroplethmapbox
+pedology_json = json.loads(gdf_pedo.to_json())
 
-    for _, row in gdf_pedo.iterrows():
-        if row.geometry.geom_type == 'Polygon':
-            coords = list(row.geometry.exterior.coords)
-            lons, lats = zip(*coords)
-            pedo_trace.append(
-                go.Scattermapbox(
-                    lon=lons,
-                    lat=lats,
-                    mode="lines",
-                    line=dict(color="black", width=1),
-                    hoverinfo="text",
-                    text=f"Ordem: {row['ordem']}<br>Subordem: {row['subordem']}",
-                    showlegend=False
-                )
-            )
-        elif row.geometry.geom_type == 'MultiPolygon':
-            for poly in row.geometry.geoms:
-                coords = list(poly.exterior.coords)
-                lons, lats = zip(*coords)
-                pedo_trace.append(
-                    go.Scattermapbox(
-                        lon=lons,
-                        lat=lats,
-                        mode="lines",
-                        line=dict(color="black", width=1),
-                        hoverinfo="text",
-                        text=f"Ordem: {row['ordem']}<br>Subordem: {row['subordem']}",
-                        showlegend=False
-                    )
-                )
-    return pedo_trace
-
-# ------------------------
 # Mapa 1: Produtividade geral
-# ------------------------
 fig1 = px.scatter_mapbox(
     gdf_geral,
     lat="lat",
@@ -86,9 +48,18 @@ fig1 = px.scatter_mapbox(
     title="Produtividade média de leite por localização e ano"
 )
 
-# Add pedologia outlines
-for trace in get_pedologia_outline_trace(gdf_pedo):
-    fig1.add_trace(trace)
+# Add pedology layer (as fill)
+fig1.add_trace(go.Choroplethmapbox(
+    geojson=pedology_json,
+    locations=gdf_pedo.index,
+    z=[1]*len(gdf_pedo),  # dummy value to show color
+    showscale=False,
+    marker_opacity=0.3,
+    marker_line_width=0.5,
+    hovertemplate="<b>Ordem</b>: %{customdata[0]}<br><b>Subordem</b>: %{customdata[1]}<extra></extra>",
+    customdata=gdf_pedo[['ordem', 'subordem']],
+    name="Pedologia"
+))
 
 fig_violin = px.violin(
     gdf_geral,
@@ -105,18 +76,14 @@ fig_violin = px.violin(
 st.plotly_chart(fig1, use_container_width=True, config={"scrollZoom": True})
 st.plotly_chart(fig_violin, use_container_width=True)
 
-# ------------------------
 # Estatísticas gerais
-# ------------------------
 st.subheader("Estatísticas Gerais da Produtividade")
 st.markdown(f"""
 - **Valor máximo:** {gdf_geral['Informação_float'].max():.2f} L/dia/vaca  
 - **Média:** {gdf_geral['Informação_float'].mean():.2f} L/dia/vaca
 """)
 
-# ------------------------
 # Mapa 2: Produtividade por tipo de pasto
-# ------------------------
 st.title("Mapa de Produtividade por Tipo de Pasto")
 
 fig2 = px.scatter_mapbox(
@@ -140,9 +107,18 @@ fig2 = px.scatter_mapbox(
     title="Produtividade de Leite por Variedade de Capim ao Longo dos Anos"
 )
 
-# Add pedologia outlines
-for trace in get_pedologia_outline_trace(gdf_pedo):
-    fig2.add_trace(trace)
+# Add pedology layer (as fill)
+fig2.add_trace(go.Choroplethmapbox(
+    geojson=pedology_json,
+    locations=gdf_pedo.index,
+    z=[1]*len(gdf_pedo),
+    showscale=False,
+    marker_opacity=0.3,
+    marker_line_width=0.5,
+    hovertemplate="<b>Ordem</b>: %{customdata[0]}<br><b>Subordem</b>: %{customdata[1]}<extra></extra>",
+    customdata=gdf_pedo[['ordem', 'subordem']],
+    name="Pedologia"
+))
 
 fig_violin2 = px.violin(
     media_tipo_pasto,
@@ -163,9 +139,7 @@ fig_violin2 = px.violin(
 st.plotly_chart(fig2, use_container_width=True, config={"scrollZoom": True})
 st.plotly_chart(fig_violin2, use_container_width=True)
 
-# ------------------------
 # Estatísticas por tipo de capim
-# ------------------------
 st.subheader("Estatísticas por Tipo de Capim")
 
 col_prod = "Produtividade (leite/dia/Vaca)"
