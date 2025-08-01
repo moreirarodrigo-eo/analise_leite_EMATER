@@ -147,17 +147,9 @@ fig2.add_trace(go.Choroplethmapbox(
 ))
 
 fig2.update_layout(
-    mapbox_style="white-bg",
-    mapbox_layers=[
-        {
-            "below": 'traces',
-            "sourcetype": "raster",
-            "sourceattribution": "United States Geological Survey",
-            "source": [
-                "https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer/tile/{z}/{y}/{x}"
-            ]
-        }
-      ])
+    mapbox_style="satellite",
+    mapbox_accesstoken="pk.eyJ1IjoibW9yZWlyYXJtdCIsImEiOiJjbTB2NDJ3bDUxZHJzMnJvaXFweTlkY3dnIn0.FSsv6xI9v6xheVcQkCoCjw"
+)
 
 st.plotly_chart(fig2, use_container_width=True, config={"scrollZoom": True})
 
