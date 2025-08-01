@@ -54,29 +54,30 @@ fig1 = px.scatter_mapbox(
 
 gdf_pedo_outline = gdf_pedo.copy()
 gdf_pedo_outline['geometry'] = gdf_pedo_outline.geometry.boundary
-scatter_data = []
+from shapely.geometry import MultiLineString, LineString
+
+lons, lats, texts = [], [], []
 
 for _, row in gdf_pedo_outline.iterrows():
-    x, y = row.geometry.xy if row.geometry.geom_type == 'LineString' else ([], [])
-    if not x:  # For MultiLineString
-        for geom in row.geometry.geoms:
-            x += list(geom.xy[0]) + [None]
-            y += list(geom.xy[1]) + [None]
-    else:
-        x = list(x) + [None]
-        y = list(y) + [None]
+    geom = row.geometry
+    if isinstance(geom, LineString):
+        xs, ys = geom.xy
+        lons += list(xs) + [None]
+        lats += list(ys) + [None]
+    elif isinstance(geom, MultiLineString):
+        for part in geom.geoms:
+            xs, ys = part.xy
+            lons += list(xs) + [None]
+            lats += list(ys) + [None]
 
-    scatter_data.append(go.Scattermapbox(
-        lon=x,
-        lat=y,
-        mode="lines",
-        line=dict(color="white", width=1),
-        name="Pedologia",
-        hoverinfo="text",
-        text=f"<b>Ordem</b>: {row['ordem']}<br><b>Subordem</b>: {row['subordem']}"
-    ))
-for trace in scatter_data:
-    fig1.add_trace(trace)
+fig1.add_trace(go.Scattermapbox(
+    lon=lons,
+    lat=lats,
+    mode="lines",
+    line=dict(color="white", width=1),
+    hoverinfo="skip",  # Optional: to speed up further
+    name="Pedologia"
+))
 
 fig1.update_layout(
     mapbox_style="satellite",
