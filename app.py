@@ -102,6 +102,7 @@ st.markdown(f"""
 # Mapa 2: Produtividade por tipo de pasto
 st.title("Mapa de Produtividade por Tipo de Pasto")
 
+# Create second figure
 fig2 = px.scatter_mapbox(
     media_tipo_pasto,
     lat="lat",
@@ -110,7 +111,7 @@ fig2 = px.scatter_mapbox(
     size="Produtividade (leite/dia/Vaca)",
     size_max=15,
     zoom=5,
-    # mapbox_style="satellite",
+    mapbox_style="carto-positron",
     width=1200,
     height=800,
     hover_data={
@@ -119,6 +120,7 @@ fig2 = px.scatter_mapbox(
         'lat': False,
         'lon': False
     },
+    
     animation_frame="Ano",
     title="Produtividade de Leite por Variedade de Capim ao Longo dos Anos"
 )
