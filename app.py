@@ -66,6 +66,12 @@ fig1.add_trace(go.Choroplethmapbox(
     
 ))
 
+fig1.update_layout(
+    mapbox_style="satellite",
+    mapbox_accesstoken="pk.eyJ1IjoibW9yZWlyYXJtdCIsImEiOiJjbTB2NDJ3bDUxZHJzMnJvaXFweTlkY3dnIn0.FSsv6xI9v6xheVcQkCoCjw"
+)
+
+
 # fig1.update_layout(
 #     mapbox_style="white-bg",
 #     mapbox_layers=[
