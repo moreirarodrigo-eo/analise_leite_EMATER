@@ -55,7 +55,7 @@ fig1 = px.scatter_mapbox(
 fig1.add_trace(go.Choroplethmapbox(
     geojson=pedology_json,
     locations=gdf_pedo.index,
-    z= 0,#[1]*len(gdf_pedo),  # dummy value to show color
+    z= [1]*len(gdf_pedo),  # dummy value to show color
     showscale=False,
     marker_opacity=1,
     marker_line_width=1,
