@@ -61,7 +61,8 @@ fig1.add_trace(go.Choroplethmapbox(
     marker_line_width=0.5,
     hovertemplate="<b>Ordem</b>: %{customdata[0]}<br><b>Subordem</b>: %{customdata[1]}<extra></extra>",
     customdata=gdf_pedo[['ordem', 'subordem']],
-    name="Pedologia"
+    name="Pedologia",
+    bordercolor= '#ff0000’
 ))
 
 fig1.update_layout(
