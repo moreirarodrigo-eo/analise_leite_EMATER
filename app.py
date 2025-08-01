@@ -15,7 +15,7 @@ def load_data_media_geral():
 
 @st.cache_data
 def load_data_pedologia():
-    return gpd.read_file("data/pdeo_area_uf_ro.geojson")
+    return gpd.read_file("data/pdeo_area_uf_ro.geojson", engine="fiona")
 
 gdf_geral = load_data_media_geral()
 gdf_pedo = load_data_pedologia()
