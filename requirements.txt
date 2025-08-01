@@ -1,5 +1,7 @@
-streamlit
-geopandas
-pandas
-plotly
-fiona
+streamlit>=1.18
+geopandas>=0.13
+plotly>=5.15
+pandas>=1.5
+shapely>=2.0
+fiona>=1.9
+pyproj>=3.4
