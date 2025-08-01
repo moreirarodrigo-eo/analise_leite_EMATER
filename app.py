@@ -138,7 +138,7 @@ fig2.add_trace(go.Choroplethmapbox(
     name="Pedologia"
 ))
 
-fig1.update_layout(
+fig2.update_layout(
     mapbox_style="white-bg",
     mapbox_layers=[
         {
