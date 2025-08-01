@@ -51,7 +51,7 @@ fig1 = px.scatter_mapbox(
     hover_name="nome" if "nome" in gdf_geral.columns else None,
     title="Produtividade média de leite por localização e ano"
 )
-
+fig1.update_traces(marker=dict(opacity=1))
 gdf_pedo_outline = gdf_pedo.copy()
 gdf_pedo_outline['geometry'] = gdf_pedo_outline.geometry.boundary
 
