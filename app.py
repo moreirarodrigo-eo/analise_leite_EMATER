@@ -15,7 +15,7 @@ def load_data_media_geral():
 
 @st.cache_data
 def load_data_pedologia():
-    return gpd.read_file("data/pedo_area_uf_ro.geojson", engine="fiona")
+    return gpd.read_file("data/pedo_area_uf_ro.geojson")
 
 gdf_geral = load_data_media_geral()
 gdf_pedo = load_data_pedologia()
@@ -35,7 +35,7 @@ fig1.add_trace(go.Choroplethmapbox(
     showscale=False,
     marker_opacity=0.3,
     marker_line_width=0.5,
-    customdata=gdf_pedo[["ordem", "subordem"]],
+    customdata=gdf_pedo[['ordem', 'subordem']],
     hovertemplate="<b>Ordem:</b> %{customdata[0]}<br><b>Subordem:</b> %{customdata[1]}<extra></extra>",
     name="Pedologia"
 ))
