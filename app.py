@@ -5,6 +5,7 @@ import geopandas as gpd
 import plotly.express as px
 import plotly.graph_objects as go
 import json
+from shapely.geometry import MultiLineString, LineString
 
 st.set_page_config(layout="wide")
 st.title("Mapa de Produtividade de Leite por Vaca")
