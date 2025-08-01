@@ -39,7 +39,7 @@ fig1 = px.scatter_mapbox(
     range_color=[gdf_geral["Informação_float"].min(), gdf_geral["Informação_float"].max()],
     size_max=15,
     zoom=6,
-    mapbox_style="carto-positron",
+    mapbox_style="satellite",
     width=1200,
     height=800,
     labels={"Informação_float": "(L/dia/vaca)", "Ano": "Ano"},
@@ -60,21 +60,20 @@ fig1.add_trace(go.Choroplethmapbox(
     customdata=gdf_pedo[['ordem', 'subordem']],
     name="Pedologia"
 ))
-
-fig_violin = px.violin(
-    gdf_geral,
-    x="Ano",
-    y="Informação_float",
-    box=True,
-    points="all",
-    color="Ano",
-    width=1200,
-    height=800,
-    labels={"Informação_float": "(L/dia/vaca)", "Ano": "Ano"}
-)
-
 st.plotly_chart(fig1, use_container_width=True, config={"scrollZoom": True})
-st.plotly_chart(fig_violin, use_container_width=True)
+
+# fig_violin = px.violin(
+#     gdf_geral,
+#     x="Ano",
+#     y="Informação_float",
+#     box=True,
+#     points="all",
+#     color="Ano",
+#     width=1200,
+#     height=800,
+#     labels={"Informação_float": "(L/dia/vaca)", "Ano": "Ano"}
+# )
+# st.plotly_chart(fig_violin, use_container_width=True)
 
 # Estatísticas gerais
 st.subheader("Estatísticas Gerais da Produtividade")
@@ -94,7 +93,7 @@ fig2 = px.scatter_mapbox(
     size="Produtividade (leite/dia/Vaca)",
     size_max=15,
     zoom=5,
-    mapbox_style="carto-positron",
+    mapbox_style="satellite",
     width=1200,
     height=800,
     hover_data={
@@ -119,25 +118,25 @@ fig2.add_trace(go.Choroplethmapbox(
     customdata=gdf_pedo[['ordem', 'subordem']],
     name="Pedologia"
 ))
-
-fig_violin2 = px.violin(
-    media_tipo_pasto,
-    x="Variedade de Capim utilizada",
-    y="Produtividade (leite/dia/Vaca)",
-    box=True,
-    points="all",
-    color="Variedade de Capim utilizada",
-    width=1200,
-    height=800,
-    labels={
-        "Produtividade (leite/dia/Vaca)": "(L/dia/vaca)",
-        "Variedade de Capim utilizada": "Variedade de Capim"
-    },
-    title="Distribuição da Produtividade de Leite por Variedade de Capim"
-)
-
 st.plotly_chart(fig2, use_container_width=True, config={"scrollZoom": True})
-st.plotly_chart(fig_violin2, use_container_width=True)
+
+# fig_violin2 = px.violin(
+#     media_tipo_pasto,
+#     x="Variedade de Capim utilizada",
+#     y="Produtividade (leite/dia/Vaca)",
+#     box=True,
+#     points="all",
+#     color="Variedade de Capim utilizada",
+#     width=1200,
+#     height=800,
+#     labels={
+#         "Produtividade (leite/dia/Vaca)": "(L/dia/vaca)",
+#         "Variedade de Capim utilizada": "Variedade de Capim"
+#     },
+#     title="Distribuição da Produtividade de Leite por Variedade de Capim"
+# )
+
+# st.plotly_chart(fig_violin2, use_container_width=True)
 
 # Estatísticas por tipo de capim
 st.subheader("Estatísticas por Tipo de Capim")
