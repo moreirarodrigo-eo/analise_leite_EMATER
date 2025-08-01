@@ -135,6 +135,20 @@ fig2.add_trace(go.Choroplethmapbox(
     customdata=gdf_pedo[['ordem', 'subordem']],
     name="Pedologia"
 ))
+
+fig1.update_layout(
+    mapbox_style="white-bg",
+    mapbox_layers=[
+        {
+            "below": 'traces',
+            "sourcetype": "raster",
+            "sourceattribution": "United States Geological Survey",
+            "source": [
+                "https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer/tile/{z}/{y}/{x}"
+            ]
+        }
+      ])
+
 st.plotly_chart(fig2, use_container_width=True, config={"scrollZoom": True})
 
 # fig_violin2 = px.violin(
@@ -158,6 +172,7 @@ st.plotly_chart(fig2, use_container_width=True, config={"scrollZoom": True})
 # Estatísticas por tipo de capim
 st.subheader("Estatísticas por Tipo de Capim")
 
+# -------- Estatísticas detalhadas por Tipo de Capim (mantido) --------
 col_prod = "Produtividade (leite/dia/Vaca)"
 col_capim = "Variedade de Capim utilizada"
 
@@ -169,7 +184,37 @@ media_valor = media_tipo_pasto[col_prod].mean()
 indice_mais_proximo_media = (media_tipo_pasto[col_prod] - media_valor).abs().idxmin()
 capim_mais_proximo_media = media_tipo_pasto.loc[indice_mais_proximo_media, col_capim]
 
+st.subheader("Estatísticas por Tipo de Capim")
 st.markdown(f"""
 - **Valor máximo:** {valor_maximo:.2f} L/dia/vaca (Capim: **{capim_maximo}**)  
 - **Média:** {media_valor:.2f} L/dia/vaca (Capim mais próximo da média: **{capim_mais_proximo_media}**)
 """)
+
+# -------- Nova seção: Máximos e mínimos por Capim e por Solo --------
+
+st.subheader("Máximos e Mínimos de Produtividade por Tipo de Capim e Tipo de Solo")
+
+# 1. Máximo e mínimo por capim
+estat_capim = media_tipo_pasto.groupby(col_capim)[col_prod].agg(['max', 'min']).reset_index()
+st.markdown("**Por Variedade de Capim:**")
+st.dataframe(estat_capim)
+
+# 2. Máximo e mínimo por tipo de solo (ordem)
+# Assumindo que existe uma coluna 'ordem' em gdf_pedo com os tipos de solo
+if "ordem" in gdf_pedo.columns:
+    # Para ligar produtividade ao tipo de solo, seria ideal cruzar espacialmente os dados
+    # Mas aqui vamos simplificar e mostrar estatísticas do próprio GeoDataFrame pedologia, se tiver produtividade (caso contrário só exibe ordem)
+    # Se quiser unir os dados espacialmente, me avise para eu ajudar com spatial join.
+
+    # Aqui só mostramos quantos registros por ordem para você ver
+    st.markdown("**Por Tipo de Solo (ordem):**")
+    
+    if col_prod in gdf_pedo.columns:
+        estat_solo = gdf_pedo.groupby("ordem")[col_prod].agg(['max', 'min']).reset_index()
+        st.dataframe(estat_solo)
+    else:
+        st.markdown("A coluna de produtividade não está presente no GeoDataFrame de solo.")
+        st.write(gdf_pedo["ordem"].value_counts())
+else:
+    st.markdown("Coluna 'ordem' não encontrada no GeoDataFrame de pedologia.")
+
