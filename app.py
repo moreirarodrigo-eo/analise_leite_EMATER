@@ -1,14 +1,16 @@
 import streamlit as st
 import geopandas as gpd
-import plotly.express as px
 import plotly.graph_objects as go
-import json 
+import plotly.express as px
+import json
 
 st.set_page_config(layout="wide")
 st.title("Mapa de Produtividade de Leite por Vaca")
 st.subheader("Análises realizadas com dados providos pela EMATER - RO")
 
-# Load GeoDataFrames
+# -----------------------------
+# Carregar dados
+# -----------------------------
 @st.cache_data
 def load_data_media_geral():
     return gpd.read_file("data/STREAMLIT_media_leite_dia_Vaca_por_geom.geojson")
@@ -17,30 +19,37 @@ def load_data_media_geral():
 def load_data_pedologia():
     return gpd.read_file("data/pedo_area_uf_ro.geojson")
 
+@st.cache_data
+def load_data_media_pasto():
+    return gpd.read_file("data/STREAMLIT_media_leite_dia_Vaca_POR_TipoCapim_por_geom.geojson")
+
 gdf_geral = load_data_media_geral()
 gdf_pedo = load_data_pedologia()
+media_tipo_pasto = load_data_media_pasto()
 
-# Ensure pedology layer is in lat/lon
+# Certificar que todos estão no mesmo CRS
 gdf_pedo = gdf_pedo.to_crs(epsg=4326)
 pedology_json = json.loads(gdf_pedo.to_json())
 
-# ---- FIGURE 1 WITH PEDOLOGY LAYER ----
+# ------------------------------------------
+# MAPA 1: PRODUTIVIDADE + PEDOLOGIA
+# ------------------------------------------
 fig1 = go.Figure()
 
-# Add pedology background layer
-fig1.add_trace(go.Choroplethmapbox(
-    geojson=pedology_json,
-    locations=gdf_pedo.index,
-    z=[1] * len(gdf_pedo),  # Dummy values for display
-    showscale=False,
-    marker_opacity=0.3,
-    marker_line_width=0.5,
-    customdata=gdf_pedo[['ordem', 'subordem']],
-    hovertemplate="<b>Ordem:</b> %{customdata[0]}<br><b>Subordem:</b> %{customdata[1]}<extra></extra>",
-    name="Pedologia"
-))
+# Contorno da pedologia (sem preenchimento)
+for feature in pedology_json['features']:
+    coords = feature['geometry']['coordinates'][0]
+    lon, lat = zip(*coords)
+    fig1.add_trace(go.Scattermapbox(
+        lon=lon,
+        lat=lat,
+        mode='lines',
+        line=dict(width=1, color='black'),
+        hoverinfo='skip',
+        showlegend=False
+    ))
 
-# Add scatter points for productivity
+# Pontos de produtividade
 fig1.add_trace(go.Scattermapbox(
     lat=gdf_geral["lat"],
     lon=gdf_geral["lon"],
@@ -64,19 +73,21 @@ fig1.add_trace(go.Scattermapbox(
 
 fig1.update_layout(
     mapbox=dict(
-        style="carto-positron",
+        style="mapbox://styles/mapbox/satellite-streets-v11",
         zoom=6,
         center=dict(lat=gdf_geral["lat"].mean(), lon=gdf_geral["lon"].mean())
     ),
     margin={"r":0,"t":50,"l":0,"b":0},
     height=800,
     width=1200,
-    title="Produtividade média de leite por localização e ano + Pedologia"
+    title="Produtividade média de leite por localização e ano + Pedologia (contorno)"
 )
 
 st.plotly_chart(fig1, use_container_width=True, config={"scrollZoom": True})
 
-# ---- VIOLIN PLOT ----
+# ------------------------------------------
+# VIOLIN PLOT 1
+# ------------------------------------------
 fig_violin = px.violin(
     gdf_geral,
     x="Ano",
@@ -90,24 +101,15 @@ fig_violin = px.violin(
 )
 st.plotly_chart(fig_violin, use_container_width=True)
 
-# ---- ESTATÍSTICAS ----
 st.subheader("Estatísticas Gerais da Produtividade")
 st.markdown(f"""
 - **Valor máximo:** {gdf_geral['Informação_float'].max():.2f} L/dia/vaca  
 - **Média:** {gdf_geral['Informação_float'].mean():.2f} L/dia/vaca
 """)
 
-# -----------------------------------------
-# --------- SEGUNDO MAPA: PASTO ----------
-# -----------------------------------------
-st.title("Mapa de Produtividade por Tipo de Pasto")
-
-@st.cache_data
-def load_data_media_pasto():
-    return gpd.read_file("data/STREAMLIT_media_leite_dia_Vaca_POR_TipoCapim_por_geom.geojson")
-
-media_tipo_pasto = load_data_media_pasto()
-
+# ------------------------------------------
+# MAPA 2: PRODUTIVIDADE POR TIPO DE CAPIM + PEDOLOGIA
+# ------------------------------------------
 fig2 = px.scatter_mapbox(
     media_tipo_pasto,
     lat="lat",
@@ -116,7 +118,7 @@ fig2 = px.scatter_mapbox(
     size="Produtividade (leite/dia/Vaca)",
     size_max=15,
     zoom=5,
-    mapbox_style="carto-positron",
+    mapbox_style="mapbox://styles/mapbox/satellite-streets-v11",
     width=1200,
     height=800,
     hover_data={
@@ -129,8 +131,24 @@ fig2 = px.scatter_mapbox(
     title="Produtividade de Leite por Variedade de Capim ao Longo dos Anos"
 )
 
+# Adiciona contornos da pedologia ao fig2 manualmente
+for feature in pedology_json['features']:
+    coords = feature['geometry']['coordinates'][0]
+    lon, lat = zip(*coords)
+    fig2.add_trace(go.Scattermapbox(
+        lon=lon,
+        lat=lat,
+        mode='lines',
+        line=dict(width=1, color='black'),
+        hoverinfo='skip',
+        showlegend=False
+    ))
+
 st.plotly_chart(fig2, use_container_width=True, config={"scrollZoom": True})
 
+# ------------------------------------------
+# VIOLIN PLOT 2
+# ------------------------------------------
 fig_violin2 = px.violin(
     media_tipo_pasto,
     x="Variedade de Capim utilizada",
@@ -148,20 +166,9 @@ fig_violin2 = px.violin(
 )
 st.plotly_chart(fig_violin2, use_container_width=True)
 
-# ---- ESTATÍSTICAS TIPO CAPIM ----
+# ------------------------------------------
+# ESTATÍSTICAS POR CAPIM
+# ------------------------------------------
 st.subheader("Estatísticas por Tipo de Capim")
 col_prod = "Produtividade (leite/dia/Vaca)"
-col_capim = "Variedade de Capim utilizada"
-
-valor_maximo = media_tipo_pasto[col_prod].max()
-indice_maximo = media_tipo_pasto[col_prod].idxmax()
-capim_maximo = media_tipo_pasto.loc[indice_maximo, col_capim]
-
-media_valor = media_tipo_pasto[col_prod].mean()
-indice_mais_proximo_media = (media_tipo_pasto[col_prod] - media_valor).abs().idxmin()
-capim_mais_proximo_media = media_tipo_pasto.loc[indice_mais_proximo_media, col_capim]
-
-st.markdown(f"""
-- **Valor máximo:** {valor_maximo:.2f} L/dia/vaca (Capim: **{capim_maximo}**)  
-- **Média:** {media_valor:.2f} L/dia/vaca (Capim mais próximo da média: **{capim_mais_proximo_media}**)
-""")
+c
