@@ -34,7 +34,7 @@ pedology_json = json.loads(gdf_pedo.to_json())
 
 
 # Mapa 1: Produtividade geral
-fig1 = px.scatter_mapbox(
+#fig1 = px.scatter_mapbox(
     gdf_geral,
     lat="lat",
     lon="lon",
@@ -133,7 +133,7 @@ st.markdown(f"""
 st.title("Mapa de Produtividade por Tipo de Pasto")
 
 # Create second figure
-fig2 = px.scatter_mapbox(
+#fig2 = px.scatter_mapbox(
     media_tipo_pasto,
     lat="lat",
     lon="lon",
