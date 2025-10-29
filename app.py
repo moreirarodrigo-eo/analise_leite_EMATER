@@ -88,7 +88,7 @@ fig1.add_trace(go.Scattermapbox(
 ))
 
 
-fig1.update_layout(
+#fig1.update_layout(
     mapbox_style="satellite",
     mapbox_accesstoken="pk.eyJ1IjoibW9yZWlyYXJtdCIsImEiOiJjbTB2NDJ3bDUxZHJzMnJvaXFweTlkY3dnIn0.FSsv6xI9v6xheVcQkCoCjw"
 )
@@ -133,7 +133,7 @@ st.markdown(f"""
 st.title("Mapa de Produtividade por Tipo de Pasto")
 
 # Create second figure
-#fig2 = px.scatter_mapbox(
+fig2 = px.scatter_mapbox(
     media_tipo_pasto,
     lat="lat",
     lon="lon",
@@ -188,7 +188,7 @@ fig2.add_trace(go.Scattermapbox(
     name="Pedologia"
 ))
 
-fig2.update_layout(
+#fig2.update_layout(
     mapbox_style="satellite",
     mapbox_accesstoken="pk.eyJ1IjoibW9yZWlyYXJtdCIsImEiOiJjbTB2NDJ3bDUxZHJzMnJvaXFweTlkY3dnIn0.FSsv6xI9v6xheVcQkCoCjw"
 )
