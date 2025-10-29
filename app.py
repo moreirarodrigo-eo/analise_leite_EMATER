@@ -34,7 +34,7 @@ pedology_json = json.loads(gdf_pedo.to_json())
 
 
 # Mapa 1: Produtividade geral
-#fig1 = px.scatter_mapbox(
+fig1 = px.scatter_mapbox(
     gdf_geral,
     lat="lat",
     lon="lon",
@@ -89,9 +89,9 @@ fig1.add_trace(go.Scattermapbox(
 
 
 #fig1.update_layout(
-    mapbox_style="satellite",
-    mapbox_accesstoken="pk.eyJ1IjoibW9yZWlyYXJtdCIsImEiOiJjbTB2NDJ3bDUxZHJzMnJvaXFweTlkY3dnIn0.FSsv6xI9v6xheVcQkCoCjw"
-)
+ #   mapbox_style="satellite",
+#    mapbox_accesstoken="pk.eyJ1IjoibW9yZWlyYXJtdCIsImEiOiJjbTB2NDJ3bDUxZHJzMnJvaXFweTlkY3dnIn0.FSsv6xI9v6xheVcQkCoCjw"
+#)
 
 
 # fig1.update_layout(
@@ -189,9 +189,9 @@ fig2.add_trace(go.Scattermapbox(
 ))
 
 #fig2.update_layout(
-    mapbox_style="satellite",
-    mapbox_accesstoken="pk.eyJ1IjoibW9yZWlyYXJtdCIsImEiOiJjbTB2NDJ3bDUxZHJzMnJvaXFweTlkY3dnIn0.FSsv6xI9v6xheVcQkCoCjw"
-)
+#    mapbox_style="satellite",
+  #  mapbox_accesstoken="pk.eyJ1IjoibW9yZWlyYXJtdCIsImEiOiJjbTB2NDJ3bDUxZHJzMnJvaXFweTlkY3dnIn0.FSsv6xI9v6xheVcQkCoCjw"
+#)
 
 st.plotly_chart(fig2, use_container_width=True, config={"scrollZoom": True})
 
