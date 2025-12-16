@@ -51,18 +51,28 @@ fig1 = px.scatter_mapbox(
     title="Produtividade média de leite por localização e ano"
 )
 
-# Add pedology layer (as fill)
+# Create a color mapping for each unique ordem
+unique_ordens = gdf_pedo['ordem'].unique()
+colorscale = px.colors.qualitative.Plotly  # or any other qualitative colorscale
+
+# Create a dictionary mapping ordem to color
+color_map = {ordem: colorscale[i % len(colorscale)] 
+             for i, ordem in enumerate(sorted(unique_ordens))}
+
+# Create a list of colors for each feature
+feature_colors = [color_map[ordem] for ordem in gdf_pedo['ordem']]
+
 fig1.add_trace(go.Choroplethmapbox(
     geojson=pedology_json,
     locations=gdf_pedo.index,
-    z= [1]*len(gdf_pedo),  # dummy value to show color
-    showscale=True,
-    marker_opacity=0.3,
-    marker_line_width=2,
+    z=[1]*len(gdf_pedo),  # dummy value
+    colorscale=[(0, color) for color in feature_colors],  # Set individual colors
+    showscale=False,
+    marker_opacity=0.5,
+    marker_line_width=1,
     hovertemplate="<b>Ordem</b>: %{customdata[0]}<br><b>Subordem</b>: %{customdata[1]}<extra></extra>",
     customdata=gdf_pedo[['ordem', 'subordem']],
     name="Pedologia",
-    
 ))
 
 fig1.update_layout(
