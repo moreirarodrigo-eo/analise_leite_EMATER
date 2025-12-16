@@ -52,48 +52,33 @@ fig1 = px.scatter_mapbox(
 )
 
 
-
 # Filter to include only ARGISSOLO and LATOSSOLO
 filtered_gdf = gdf_pedo[gdf_pedo['ordem'].isin(['ARGISSOLO', 'LATOSSOLO'])].copy()
 
-# Define color palette only for these two
+# Define color palette
 color_palette = {
     'ARGISSOLO': '#1f77b4',
     'LATOSSOLO': '#ff7f0e'
 }
 
-# Create colors list for each feature
-feature_colors = [color_palette.get(ordem, '#cccccc') for ordem in filtered_gdf['ordem']]
-
-# Create filtered geojson if needed (optional)
-# If pedology_json is a FeatureCollection, you might need to filter it too
-# Or you can use the same geojson if it contains all features
-
-fig1.add_trace(go.Choroplethmapbox(
-    geojson=pedology_json,  # Use original or create filtered version
-    locations=filtered_gdf.index,
-    z=[1]*len(filtered_gdf),
-    colorscale=[(0, color) for color in feature_colors],
-    showscale=False,
-    marker_opacity=0.6,
-    marker_line_width=1,
-    marker_line_color='black',
-    hovertemplate="<b>Ordem</b>: %{customdata[0]}<br><b>Subordem</b>: %{customdata[1]}<extra></extra>",
-    customdata=filtered_gdf[['ordem', 'subordem']],
-    name="Pedologia",
-))
-
-# Add legend only for displayed orders
+# Create a separate trace for each ordem
 for ordem, color in color_palette.items():
-    fig1.add_trace(go.Scattermapbox(
-        lat=[None],
-        lon=[None],
-        mode='markers',
-        marker=dict(size=10, color=color),
-        name=ordem,
-        showlegend=True
-    ))
-
+    ordem_gdf = filtered_gdf[filtered_gdf['ordem'] == ordem]
+    
+    if not ordem_gdf.empty:
+        fig1.add_trace(go.Choroplethmapbox(
+            geojson=pedology_json,
+            locations=ordem_gdf.index,
+            z=[1] * len(ordem_gdf),  # All values are 1
+            colorscale=[(0, color), (1, color)],  # Single color colorscale
+            showscale=False,
+            marker_opacity=0.6,
+            marker_line_width=1,
+            marker_line_color='black',
+            hovertemplate=f"<b>Ordem</b>: {ordem}<br><b>Subordem</b>: %{{customdata[0]}}<extra></extra>",
+            customdata=ordem_gdf[['subordem']],
+            name=ordem,  # This will create separate legend entries
+        ))
 
 
 
