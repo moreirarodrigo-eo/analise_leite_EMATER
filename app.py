@@ -35,7 +35,7 @@ fig1.add_trace(go.Choroplethmapbox(
     showscale=False,
     marker_opacity=0.3,
     marker_line_width=0.5,
-    animation_frame="Ano",
+ 
     customdata=gdf_pedo[["ordem", "subordem"]],
     hovertemplate="<b>Ordem:</b> %{customdata[0]}<br><b>Subordem:</b> %{customdata[1]}<extra></extra>",
     name="Pedologia"
@@ -53,7 +53,7 @@ fig1.add_trace(go.Scattermapbox(
         cmin=gdf_geral["Informação_float"].min(),
         cmax=gdf_geral["Informação_float"].max(),
         showscale=True,
-        sizemode="area",
+        sizemode="area",    animation_frame="Ano",
         sizeref=2.*max(gdf_geral["Informação_float"])/(40.**2),
         sizemin=4
     ),
