@@ -88,25 +88,6 @@ fig1.add_trace(go.Scattermapbox(
 ))
 
 
-#fig1.update_layout(
- #   mapbox_style="satellite",
-#    mapbox_accesstoken="pk.eyJ1IjoibW9yZWlyYXJtdCIsImEiOiJjbTB2NDJ3bDUxZHJzMnJvaXFweTlkY3dnIn0.FSsv6xI9v6xheVcQkCoCjw"
-#)
-
-
-# fig1.update_layout(
-#     mapbox_style="white-bg",
-#     mapbox_layers=[
-#         {
-#             "below": 'traces',
-#             "sourcetype": "raster",
-#             "sourceattribution": "United States Geological Survey",
-#             "source": [
-#                 "https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer/tile/{z}/{y}/{x}"
-#             ]
-#         }
-#       ])
-
 st.plotly_chart(fig1, use_container_width=True, config={"scrollZoom": True})
 
 # fig_violin = px.violin(
@@ -187,11 +168,6 @@ fig2.add_trace(go.Scattermapbox(
     text=texts,
     name="Pedologia"
 ))
-
-#fig2.update_layout(
-#    mapbox_style="satellite",
-  #  mapbox_accesstoken="pk.eyJ1IjoibW9yZWlyYXJtdCIsImEiOiJjbTB2NDJ3bDUxZHJzMnJvaXFweTlkY3dnIn0.FSsv6xI9v6xheVcQkCoCjw"
-#)
 
 st.plotly_chart(fig2, use_container_width=True, config={"scrollZoom": True})
 
