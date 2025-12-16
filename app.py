@@ -52,7 +52,7 @@ fig1 = px.scatter_mapbox(
 )
 
 # Add pedology layer (as fill)
-fig1.add_trace(go.Choroplethmap(
+fig1.add_trace(go.Choroplethmapbox(
     geojson=pedology_json,
     locations=gdf_pedo.index,
     z= [1]*len(gdf_pedo),  # dummy value to show color
