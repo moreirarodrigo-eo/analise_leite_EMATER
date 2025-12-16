@@ -52,13 +52,13 @@ fig1 = px.scatter_mapbox(
 )
 
 # Add pedology layer (as fill)
-fig1.add_trace(go.Choroplethmapbox(
+fig1.add_trace(go.Choroplethmap(
     geojson=pedology_json,
     locations=gdf_pedo.index,
     z= [1]*len(gdf_pedo),  # dummy value to show color
     showscale=False,
     marker_opacity=0.3,
-    marker_line_width=1,
+    marker_line_width=2,
     hovertemplate="<b>Ordem</b>: %{customdata[0]}<br><b>Subordem</b>: %{customdata[1]}<extra></extra>",
     customdata=gdf_pedo[['ordem', 'subordem']],
     name="Pedologia",
