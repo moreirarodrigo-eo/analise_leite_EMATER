@@ -35,6 +35,7 @@ fig1.add_trace(go.Choroplethmapbox(
     showscale=False,
     marker_opacity=0.3,
     marker_line_width=0.5,
+    animation_frame="Ano",
     customdata=gdf_pedo[["ordem", "subordem"]],
     hovertemplate="<b>Ordem:</b> %{customdata[0]}<br><b>Subordem:</b> %{customdata[1]}<extra></extra>",
     name="Pedologia"
@@ -119,6 +120,7 @@ fig2 = px.scatter_mapbox(
     mapbox_style="carto-positron",
     width=1200,
     height=800,
+    animation_frame="Ano",
     hover_data={
         'Variedade de Capim utilizada': True,
         'Produtividade (leite/dia/Vaca)': ':.2f',
