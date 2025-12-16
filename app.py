@@ -55,8 +55,8 @@ fig1 = px.scatter_mapbox(
 
 # Define your own color palette
 color_palette = {
-    'Argissolo': '#1f77b4',
-    'Latossolo': '#ff7f0e',
+    'ARGISSOLO': '#1f77b4',
+    'LATOSSOLO': '#ff7f0e',
     'Neossolo': '#2ca02c',
     'Cambissolo': '#d62728',
     'Gleissolo': '#9467bd',
