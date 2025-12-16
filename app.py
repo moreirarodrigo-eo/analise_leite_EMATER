@@ -144,7 +144,7 @@ filtered_gdf = media_tipo_pasto[media_tipo_pasto['capim'].isin(['Brachiaria Briz
 
 # Create second figure
 fig2 = px.scatter_mapbox(
-    filtered_gdf,
+    media_tipo_pasto,
     lat="lat",
     lon="lon",
     color="Variedade de Capim utilizada",
