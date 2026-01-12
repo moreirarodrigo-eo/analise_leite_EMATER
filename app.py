@@ -141,13 +141,12 @@ st.markdown(f"""
  ##### Mapa 2: Produtividade por tipo de pasto #### 
 ####### --------- ####### ####### --------- ####### 
 ####### --------- ####### ####### --------- ####### 
-
 import streamlit as st
 import geopandas as gpd
-import plotly.express as px
+import plotly.graph_objects as go
 import pandas as pd
 
-st.title("Mapa de Produtividade por Tipo de Pasto")
+st.title("Mapa de Produtividade por Tipo de Pasto (2019–2024)")
 
 # --------------------------------------------------
 # Load data
@@ -158,118 +157,155 @@ def load_data_media_pasto():
         "data/STREAMLIT_media_leite_dia_Vaca_POR_TipoCapim_por_geom.geojson"
     )
 
-media_tipo_pasto = load_data_media_pasto()
+gdf = load_data_media_pasto()
 
 # --------------------------------------------------
-# Filter capim types of interest
+# Filter capims of interest
 # --------------------------------------------------
-lista_tipos_pasto = [
-    'Brachiaria Brizantha',
-    'Panicum Maximum'
-]
+capins = ['Brachiaria Brizantha', 'Panicum Maximum']
 
-filtered_gdf = media_tipo_pasto[
-    media_tipo_pasto['Variedade de Capim utilizada'].isin(lista_tipos_pasto)
-].copy()
+gdf = gdf[gdf['Variedade de Capim utilizada'].isin(capins)].copy()
 
-# --------------------------------------------------
-# IMPORTANT FIX:
-# Panicum only exists from 2021 onward
-# Restrict animation range
-# --------------------------------------------------
-filtered_gdf = filtered_gdf[
-    filtered_gdf['Ano'] >= 2021
-]
-
-# --------------------------------------------------
-# Remove invalid productivity values (critical for Plotly)
-# --------------------------------------------------
-filtered_gdf = (
-    filtered_gdf
-    .dropna(subset=['Produtividade (leite/dia/Vaca)', 'lat', 'lon'])
+# Remove invalid values
+gdf = (
+    gdf
+    .dropna(subset=['Produtividade (leite/dia/Vaca)', 'lat', 'lon', 'Ano'])
     .query('`Produtividade (leite/dia/Vaca)` > 0')
 )
 
 # --------------------------------------------------
-# Debug / validation table (optional but recommended)
+# Helper function to build traces
 # --------------------------------------------------
-st.subheader("Resumo estatístico por capim e ano")
-st.dataframe(
-    filtered_gdf
-    .groupby(['Variedade de Capim utilizada', 'Ano'])[
-        'Produtividade (leite/dia/Vaca)'
+def make_trace(df, capim, color):
+    return go.Scattermapbox(
+        lat=df['lat'],
+        lon=df['lon'],
+        mode='markers',
+        marker=dict(
+            size=df['Produtividade (leite/dia/Vaca)'],
+            sizemin=4,
+            opacity=0.75
+        ),
+        name=capim,
+        legendgroup=capim,
+        hovertemplate=(
+            "<b>Capim:</b> " + capim +
+            "<br><b>Produtividade:</b> %{marker.size:.2f} L/dia/vaca"
+            "<extra></extra>"
+        )
+    )
+
+# --------------------------------------------------
+# Build frames manually (THIS IS THE KEY)
+# --------------------------------------------------
+years = sorted(gdf['Ano'].unique())
+frames = []
+
+for year in years:
+    frame_data = []
+
+    for capim in capins:
+        df_capim = gdf[
+            (gdf['Ano'] == year) &
+            (gdf['Variedade de Capim utilizada'] == capim)
+        ]
+
+        # Only add trace if data exists for that year
+        if not df_capim.empty:
+            frame_data.append(
+                make_trace(df_capim, capim, None)
+            )
+
+    frames.append(
+        go.Frame(
+            name=str(year),
+            data=frame_data
+        )
+    )
+
+# --------------------------------------------------
+# Initial figure (2019)
+# --------------------------------------------------
+init_year = years[0]
+init_traces = []
+
+for capim in capins:
+    df_init = gdf[
+        (gdf['Ano'] == init_year) &
+        (gdf['Variedade de Capim utilizada'] == capim)
     ]
-    .describe()
+    if not df_init.empty:
+        init_traces.append(make_trace(df_init, capim, None))
+
+fig = go.Figure(
+    data=init_traces,
+    frames=frames
 )
 
 # --------------------------------------------------
-# Create map
+# Layout
 # --------------------------------------------------
-fig2 = px.scatter_mapbox(
-    filtered_gdf,
-    lat="lat",
-    lon="lon",
-    color="Variedade de Capim utilizada",
-    size="Produtividade (leite/dia/Vaca)",
-    size_max=30,
-    zoom=5,
-    animation_frame="Ano",
-    hover_data={
-        'Variedade de Capim utilizada': True,
-        'Produtividade (leite/dia/Vaca)': ':.2f',
-        'lat': False,
-        'lon': False
-    },
-    title="Produtividade de Leite por Variedade de Capim (2021–2024)"
-)
-
-# --------------------------------------------------
-# CRITICAL: prevent small values from disappearing
-# --------------------------------------------------
-fig2.update_traces(marker=dict(sizemin=4))
-
-# --------------------------------------------------
-# Basemap (USGS imagery)
-# --------------------------------------------------
-fig2.update_layout(
-    mapbox_style="white-bg",
-    mapbox_layers=[
+fig.update_layout(
+    title="Produtividade de Leite por Tipo de Pasto (2019–2024)",
+    mapbox=dict(
+        style="white-bg",
+        zoom=5,
+        center=dict(
+            lat=gdf['lat'].mean(),
+            lon=gdf['lon'].mean()
+        ),
+        layers=[
+            {
+                "below": "traces",
+                "sourcetype": "raster",
+                "source": [
+                    "https://basemap.nationalmap.gov/arcgis/rest/services/"
+                    "USGSImageryOnly/MapServer/tile/{z}/{y}/{x}"
+                ]
+            }
+        ]
+    ),
+    margin=dict(l=0, r=0, t=60, b=0),
+    legend=dict(title="Variedade de Capim"),
+    updatemenus=[
         {
-            "below": "traces",
-            "sourcetype": "raster",
-            "sourceattribution": "USGS",
-            "source": [
-                "https://basemap.nationalmap.gov/arcgis/rest/services/"
-                "USGSImageryOnly/MapServer/tile/{z}/{y}/{x}"
+            "type": "buttons",
+            "showactive": False,
+            "buttons": [
+                {
+                    "label": "Play",
+                    "method": "animate",
+                    "args": [
+                        None,
+                        {
+                            "frame": {"duration": 800, "redraw": True},
+                            "transition": {"duration": 300},
+                            "fromcurrent": True
+                        }
+                    ]
+                }
             ]
         }
     ],
-    margin=dict(l=0, r=0, t=60, b=0)
+    sliders=[
+        {
+            "steps": [
+                {
+                    "args": [[str(year)], {"frame": {"duration": 0}, "mode": "immediate"}],
+                    "label": str(year),
+                    "method": "animate"
+                }
+                for year in years
+            ],
+            "currentvalue": {"prefix": "Ano: "}
+        }
+    ]
 )
 
 # --------------------------------------------------
 # Render
 # --------------------------------------------------
-st.plotly_chart(
-    fig2,
-    use_container_width=True,
-    config={"scrollZoom": True}
-)
-
-# --------------------------------------------------
-# Summary stats (optional, publication-ready)
-# --------------------------------------------------
-st.subheader("Estatísticas gerais (2021–2024)")
-
-stats = (
-    filtered_gdf
-    .groupby('Variedade de Capim utilizada')['Produtividade (leite/dia/Vaca)']
-    .agg(['count', 'mean', 'min', 'max'])
-    .round(2)
-)
-
-st.dataframe(stats)
-
+st.plotly_chart(fig, use_container_width=True, config={"scrollZoom": True})
 
 # st.title("Mapa de Produtividade por Tipo de Pasto")
 # lista_tipos_pasto = ['Panicum Maximum', 'Brachiaria Brizantha']
