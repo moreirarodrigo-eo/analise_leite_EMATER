@@ -150,28 +150,51 @@ filtered_gdf_media_tipo_pasto = media_tipo_pasto[media_tipo_pasto['Variedade de 
 st.markdown(filtered_gdf_media_tipo_pasto['Variedade de Capim utilizada'].unique())
 
 # Create second figure
-fig2 = px.scatter_mapbox(
-    filtered_gdf_media_tipo_pasto,
-    lat="lat",
-    lon="lon",
-    color="Variedade de Capim utilizada",
-    size="Produtividade (leite/dia/Vaca)",
-    size_max=30,
-    zoom=5,
-    # mapbox_style="carto-positron",
-    width=1200,
-    height=800,
-    hover_data={
-        'Variedade de Capim utilizada': True,
-        'Produtividade (leite/dia/Vaca)': ':.2f',
-        'lat': False,
-        'lon': False
-    },
+
+fig2 = go.Figure()
+
+for capim in ['Brachiaria Brizantha', 'Panicum Maximum']:
+    df_capim = filtered_gdf_media_tipo_pasto[
+        filtered_gdf_media_tipo_pasto['Variedade de Capim utilizada'] == capim
+    ]
+
+    fig2.add_trace(
+        go.Scattermapbox(
+            lat=df_capim['lat'],
+            lon=df_capim['lon'],
+            mode='markers',
+            marker=dict(
+                size=df_capim['Produtividade (leite/dia/Vaca)'],
+                sizemin=4
+            ),
+            name=capim,
+            hovertext=df_capim['Produtividade (leite/dia/Vaca)'],
+            frame=df_capim['Ano']
+        )
+    )
+
+# fig2 = px.scatter_mapbox(
+#     filtered_gdf_media_tipo_pasto,
+#     lat="lat",
+#     lon="lon",
+#     color="Variedade de Capim utilizada",
+#     size="Produtividade (leite/dia/Vaca)",
+#     size_max=30,
+#     zoom=5,
+#     # mapbox_style="carto-positron",
+#     width=1200,
+#     height=800,
+#     hover_data={
+#         'Variedade de Capim utilizada': True,
+#         'Produtividade (leite/dia/Vaca)': ':.2f',
+#         'lat': False,
+#         'lon': False
+#     },
     
-    animation_frame="Ano",
-    title="Produtividade de Leite por Variedade de Capim ao Longo dos Anos"
-)
-fig2.update_traces(marker=dict(sizemin=1))
+#     animation_frame="Ano",
+#     title="Produtividade de Leite por Variedade de Capim ao Longo dos Anos"
+# )
+
 # # Add pedology layer (as fill)
 # # Create a separate trace for each ordem
 # for ordem, color in color_palette.items():
