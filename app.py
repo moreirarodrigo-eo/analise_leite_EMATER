@@ -154,26 +154,26 @@ fig2 = px.scatter_mapbox(
     lon="lon",
     color="Variedade de Capim utilizada",
     size="Produtividade (leite/dia/Vaca)",
+    animation_frame="Ano",
+    category_orders={
+        "Variedade de Capim utilizada": [
+            "Brachiaria Brizantha",
+            "Panicum Maximum"
+        ]
+    },
     size_max=30,
     zoom=5,
-    # mapbox_style="carto-positron",
-    width=1200,
-    height=800,
     hover_data={
         'Variedade de Capim utilizada': True,
         'Produtividade (leite/dia/Vaca)': ':.2f',
         'lat': False,
         'lon': False
     },
-    
-    animation_frame="Ano",
-    title="Produtividade de Leite por Variedade de Capim ao Longo dos Anos",
-        category_orders={
-        "Variedade de Capim utilizada": [
-            "Brachiaria Brizantha",
-            "Panicum Maximum"
-        ]
+    title="Produtividade de Leite por Variedade de Capim"
 )
+
+fig2.update_traces(marker=dict(sizemin=4))
+
 
 # # Add pedology layer (as fill)
 # # Create a separate trace for each ordem
