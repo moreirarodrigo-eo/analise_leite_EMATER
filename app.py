@@ -167,7 +167,12 @@ fig2 = px.scatter_mapbox(
     },
     
     animation_frame="Ano",
-    title="Produtividade de Leite por Variedade de Capim ao Longo dos Anos"
+    title="Produtividade de Leite por Variedade de Capim ao Longo dos Anos",
+        category_orders={
+        "Variedade de Capim utilizada": [
+            "Brachiaria Brizantha",
+            "Panicum Maximum"
+        ]
 )
 
 # # Add pedology layer (as fill)
