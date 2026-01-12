@@ -144,7 +144,7 @@ st.markdown(f"""
 
 st.title("Mapa de Produtividade por Tipo de Pasto")
 # lista_tipos_pasto = ['Panicum Maximum', 'Brachiaria Brizantha']
-filtered_gdf_media_tipo_pasto = media_tipo_pasto[media_tipo_pasto['Variedade de Capim utilizada'] =! 'Elefante']
+filtered_gdf_media_tipo_pasto = media_tipo_pasto[media_tipo_pasto['Variedade de Capim utilizada'] != 'Elefante']
 st.markdown(filtered_gdf_media_tipo_pasto['Variedade de Capim utilizada'].unique())
 
 
