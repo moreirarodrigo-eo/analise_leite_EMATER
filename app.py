@@ -165,26 +165,26 @@ fig2 = px.scatter_mapbox(
     title="Produtividade de Leite por Variedade de Capim ao Longo dos Anos"
 )
 
-# Add pedology layer (as fill)
-# Create a separate trace for each ordem
-for ordem, color in color_palette.items():
-    if ordem in unique_ordens:  # Only create trace if this ordem exists in data
-        ordem_gdf = gdf_pedo[gdf_pedo['ordem'] == ordem]
+# # Add pedology layer (as fill)
+# # Create a separate trace for each ordem
+# for ordem, color in color_palette.items():
+#     if ordem in unique_ordens:  # Only create trace if this ordem exists in data
+#         ordem_gdf = gdf_pedo[gdf_pedo['ordem'] == ordem]
         
-        if not ordem_gdf.empty:
-            fig2.add_trace(go.Choroplethmapbox(
-                geojson=pedology_json,
-                locations=ordem_gdf.index,
-                z=[1] * len(ordem_gdf),
-                colorscale=[(0, color), (1, color)],
-                showscale=False,
-                marker_opacity=0.6,
-                marker_line_width=1,
-                marker_line_color='black',
-                hovertemplate=f"<b>Ordem</b>: {ordem}<br><b>Subordem</b>: %{{customdata[0]}}<extra></extra>",
-                customdata=ordem_gdf[['subordem']],
-                name=ordem,
-            ))
+#         if not ordem_gdf.empty:
+#             fig2.add_trace(go.Choroplethmapbox(
+#                 geojson=pedology_json,
+#                 locations=ordem_gdf.index,
+#                 z=[1] * len(ordem_gdf),
+#                 colorscale=[(0, color), (1, color)],
+#                 showscale=False,
+#                 marker_opacity=0.6,
+#                 marker_line_width=1,
+#                 marker_line_color='black',
+#                 hovertemplate=f"<b>Ordem</b>: {ordem}<br><b>Subordem</b>: %{{customdata[0]}}<extra></extra>",
+#                 customdata=ordem_gdf[['subordem']],
+#                 name=ordem,
+#             ))
 
 fig2.update_layout(
     mapbox_style="white-bg",
