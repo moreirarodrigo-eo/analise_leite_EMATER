@@ -227,6 +227,11 @@ st.plotly_chart(fig2, use_container_width=True, config={"scrollZoom": True})
 # st.plotly_chart(fig_violin2, use_container_width=True)
 
 # Estatísticas por tipo de capim
+st.write(
+    filtered_gdf_media_tipo_pasto
+    .groupby('Variedade de Capim utilizada')['Produtividade (leite/dia/Vaca)']
+    .agg(['min', 'mean', 'max'])
+)
 
 # -------- Estatísticas detalhadas por Tipo de Capim (mantido) --------
 col_prod = "Produtividade (leite/dia/Vaca)"
