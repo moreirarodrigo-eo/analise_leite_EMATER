@@ -233,6 +233,13 @@ st.write(
     .agg(['min', 'mean', 'max'])
 )
 
+st.write(
+    filtered_gdf_media_tipo_pasto
+    .groupby(['Variedade de Capim utilizada', 'Ano'])['Produtividade (leite/dia/Vaca)']
+    .describe()
+)
+
+
 # -------- Estatísticas detalhadas por Tipo de Capim (mantido) --------
 col_prod = "Produtividade (leite/dia/Vaca)"
 col_capim = "Variedade de Capim utilizada"
