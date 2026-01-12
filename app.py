@@ -163,6 +163,8 @@ fig2 = px.scatter_mapbox(
     },
     size_max=30,
     zoom=5,
+      width=1200,
+    height=800,
     hover_data={
         'Variedade de Capim utilizada': True,
         'Produtividade (leite/dia/Vaca)': ':.2f',
