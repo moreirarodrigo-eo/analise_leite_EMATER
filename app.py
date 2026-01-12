@@ -136,10 +136,14 @@ st.markdown(f"""
 - **Média:** {gdf_geral['Informação_float'].mean():.2f} L/dia/vaca
 """)
 
-# Mapa 2: Produtividade por tipo de pasto
+####### --------- ####### ####### --------- ####### 
+####### --------- ####### ####### --------- ####### 
+ ##### Mapa 2: Produtividade por tipo de pasto #### 
+####### --------- ####### ####### --------- ####### 
+####### --------- ####### ####### --------- ####### 
 st.title("Mapa de Produtividade por Tipo de Pasto")
-
-filtered_gdf_media_tipo_pasto = media_tipo_pasto[media_tipo_pasto['Variedade de Capim utilizada'].isin(['Brachiaria Brizantha', 'Panicum Maximum'])].copy()
+lista_tipos_pasto = ['Brachiaria Brizantha', 'Panicum Maximum']
+filtered_gdf_media_tipo_pasto = media_tipo_pasto[media_tipo_pasto['Variedade de Capim utilizada'].isin(lista_tipos_pasto)].copy()
 
 
 # Create second figure
