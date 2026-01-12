@@ -139,12 +139,12 @@ st.markdown(f"""
 # Mapa 2: Produtividade por tipo de pasto
 st.title("Mapa de Produtividade por Tipo de Pasto")
 
-filtered_gdf = media_tipo_pasto[media_tipo_pasto['Variedade de Capim utilizada'].isin(['Brachiaria Brizantha', 'Panicum Maximum'])].copy()
+filtered_gdf_media_tipo_pasto = media_tipo_pasto[media_tipo_pasto['Variedade de Capim utilizada'].isin(['Brachiaria Brizantha', 'Panicum Maximum'])].copy()
 
 
 # Create second figure
 fig2 = px.scatter_mapbox(
-    media_tipo_pasto,
+    filtered_gdf_media_tipo_pasto,
     lat="lat",
     lon="lon",
     color="Variedade de Capim utilizada",
@@ -226,13 +226,13 @@ st.subheader("Estatísticas por Tipo de Capim")
 col_prod = "Produtividade (leite/dia/Vaca)"
 col_capim = "Variedade de Capim utilizada"
 
-valor_maximo = media_tipo_pasto[col_prod].max()
-indice_maximo = media_tipo_pasto[col_prod].idxmax()
-capim_maximo = media_tipo_pasto.loc[indice_maximo, col_capim]
+valor_maximo = filtered_gdf_media_tipo_pasto[col_prod].max()
+indice_maximo = filtered_gdf_media_tipo_pasto[col_prod].idxmax()
+capim_maximo = filtered_gdf_media_tipo_pasto.loc[indice_maximo, col_capim]
 
-media_valor = media_tipo_pasto[col_prod].mean()
-indice_mais_proximo_media = (media_tipo_pasto[col_prod] - media_valor).abs().idxmin()
-capim_mais_proximo_media = media_tipo_pasto.loc[indice_mais_proximo_media, col_capim]
+media_valor = filtered_gdf_media_tipo_pasto[col_prod].mean()
+indice_mais_proximo_media = (filtered_gdf_media_tipo_pasto[col_prod] - media_valor).abs().idxmin()
+capim_mais_proximo_media = filtered_gdf_media_tipo_pasto.loc[indice_mais_proximo_media, col_capim]
 
 st.subheader("Estatísticas por Tipo de Capim")
 st.markdown(f"""
