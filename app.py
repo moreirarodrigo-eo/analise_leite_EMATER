@@ -147,7 +147,7 @@ st.markdown(f"""
 st.title("Mapa de Produtividade por Tipo de Pasto")
 lista_tipos_pasto = ['Brachiaria Brizantha', 'Panicum Maximum']
 filtered_gdf_media_tipo_pasto = media_tipo_pasto[media_tipo_pasto['Variedade de Capim utilizada'].isin(lista_tipos_pasto)]
-st.markdown(print(filtered_gdf_media_tipo_pasto['Variedade de Capim utilizada'].unique()))
+st.markdown(print(filtered_gdf_media_tipo_pasto['Variedade de Capim utilizada']))
 
 # Create second figure
 fig2 = px.scatter_mapbox(
@@ -227,7 +227,6 @@ st.plotly_chart(fig2, use_container_width=True, config={"scrollZoom": True})
 # st.plotly_chart(fig_violin2, use_container_width=True)
 
 # Estatísticas por tipo de capim
-st.subheader("Estatísticas por Tipo de Capim")
 
 # -------- Estatísticas detalhadas por Tipo de Capim (mantido) --------
 col_prod = "Produtividade (leite/dia/Vaca)"
