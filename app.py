@@ -139,7 +139,7 @@ st.markdown(f"""
 # Mapa 2: Produtividade por tipo de pasto
 st.title("Mapa de Produtividade por Tipo de Pasto")
 
-filtered_gdf = media_tipo_pasto[media_tipo_pasto['capim'].isin(['Brachiaria Brizantha', 'Panicum Maximum'])].copy()
+filtered_gdf = media_tipo_pasto[media_tipo_pasto['Variedade de Capim utilizada'].isin(['Brachiaria Brizantha', 'Panicum Maximum'])].copy()
 
 
 # Create second figure
