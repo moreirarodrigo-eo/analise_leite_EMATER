@@ -142,117 +142,117 @@ st.markdown(f"""
 ####### --------- ####### ####### --------- ####### 
 ####### --------- ####### ####### --------- ####### 
 
-# st.title("Mapa de Produtividade por Tipo de Pasto")
+st.title("Mapa de Produtividade por Tipo de Pasto")
 # lista_tipos_pasto = ['Panicum Maximum', 'Brachiaria Brizantha']
-# filtered_gdf_media_tipo_pasto = media_tipo_pasto[media_tipo_pasto['Variedade de Capim utilizada'].isin(lista_tipos_pasto)]
-# st.markdown(filtered_gdf_media_tipo_pasto['Variedade de Capim utilizada'].unique())
+filtered_gdf_media_tipo_pasto = media_tipo_pasto#[media_tipo_pasto['Variedade de Capim utilizada'].isin(lista_tipos_pasto)]
+st.markdown(filtered_gdf_media_tipo_pasto['Variedade de Capim utilizada'].unique())
 
 
-# fig2 = px.scatter_mapbox(
-#     filtered_gdf_media_tipo_pasto,
-#     lat="lat",
-#     lon="lon",
+fig2 = px.scatter_mapbox(
+    filtered_gdf_media_tipo_pasto,
+    lat="lat",
+    lon="lon",
+    color="Variedade de Capim utilizada",
+    size="Produtividade (leite/dia/Vaca)",
+    size_max=30,
+    zoom=5,
+    # mapbox_style="carto-positron",
+    width=1200,
+    height=800,
+    hover_data={
+        'Variedade de Capim utilizada': True,
+        'Produtividade (leite/dia/Vaca)': ':.2f',
+        'lat': False,
+        'lon': False
+    },
+    
+    animation_frame="Ano",
+    title="Produtividade de Leite por Variedade de Capim ao Longo dos Anos"
+)
+
+# # Add pedology layer (as fill)
+# # Create a separate trace for each ordem
+# for ordem, color in color_palette.items():
+#     if ordem in unique_ordens:  # Only create trace if this ordem exists in data
+#         ordem_gdf = gdf_pedo[gdf_pedo['ordem'] == ordem]
+        
+#         if not ordem_gdf.empty:
+#             fig2.add_trace(go.Choroplethmapbox(
+#                 geojson=pedology_json,
+#                 locations=ordem_gdf.index,
+#                 z=[1] * len(ordem_gdf),
+#                 colorscale=[(0, color), (1, color)],
+#                 showscale=False,
+#                 marker_opacity=0.6,
+#                 marker_line_width=1,
+#                 marker_line_color='black',
+#                 hovertemplate=f"<b>Ordem</b>: {ordem}<br><b>Subordem</b>: %{{customdata[0]}}<extra></extra>",
+#                 customdata=ordem_gdf[['subordem']],
+#                 name=ordem,
+#             ))
+
+fig2.update_layout(
+    mapbox_style="white-bg",
+    mapbox_layers=[
+        {
+            "below": 'traces',
+            "sourcetype": "raster",
+            "sourceattribution": "United States Geological Survey",
+            "source": [
+                "https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer/tile/{z}/{y}/{x}"
+            ]
+        }
+      ])
+
+st.plotly_chart(fig2, use_container_width=True, config={"scrollZoom": True})
+
+# fig_violin2 = px.violin(
+#     media_tipo_pasto,
+#     x="Variedade de Capim utilizada",
+#     y="Produtividade (leite/dia/Vaca)",
+#     box=True,
+#     points="all",
 #     color="Variedade de Capim utilizada",
-#     size="Produtividade (leite/dia/Vaca)",
-#     size_max=30,
-#     zoom=5,
-#     # mapbox_style="carto-positron",
 #     width=1200,
 #     height=800,
-#     hover_data={
-#         'Variedade de Capim utilizada': True,
-#         'Produtividade (leite/dia/Vaca)': ':.2f',
-#         'lat': False,
-#         'lon': False
+#     labels={
+#         "Produtividade (leite/dia/Vaca)": "(L/dia/vaca)",
+#         "Variedade de Capim utilizada": "Variedade de Capim"
 #     },
-    
-#     animation_frame="Ano",
-#     title="Produtividade de Leite por Variedade de Capim ao Longo dos Anos"
+#     title="Distribuição da Produtividade de Leite por Variedade de Capim"
 # )
 
-# # # Add pedology layer (as fill)
-# # # Create a separate trace for each ordem
-# # for ordem, color in color_palette.items():
-# #     if ordem in unique_ordens:  # Only create trace if this ordem exists in data
-# #         ordem_gdf = gdf_pedo[gdf_pedo['ordem'] == ordem]
-        
-# #         if not ordem_gdf.empty:
-# #             fig2.add_trace(go.Choroplethmapbox(
-# #                 geojson=pedology_json,
-# #                 locations=ordem_gdf.index,
-# #                 z=[1] * len(ordem_gdf),
-# #                 colorscale=[(0, color), (1, color)],
-# #                 showscale=False,
-# #                 marker_opacity=0.6,
-# #                 marker_line_width=1,
-# #                 marker_line_color='black',
-# #                 hovertemplate=f"<b>Ordem</b>: {ordem}<br><b>Subordem</b>: %{{customdata[0]}}<extra></extra>",
-# #                 customdata=ordem_gdf[['subordem']],
-# #                 name=ordem,
-# #             ))
+# st.plotly_chart(fig_violin2, use_container_width=True)
 
-# fig2.update_layout(
-#     mapbox_style="white-bg",
-#     mapbox_layers=[
-#         {
-#             "below": 'traces',
-#             "sourcetype": "raster",
-#             "sourceattribution": "United States Geological Survey",
-#             "source": [
-#                 "https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer/tile/{z}/{y}/{x}"
-#             ]
-#         }
-#       ])
+# Estatísticas por tipo de capim
+st.write(
+    filtered_gdf_media_tipo_pasto
+    .groupby('Variedade de Capim utilizada')['Produtividade (leite/dia/Vaca)']
+    .agg(['min', 'mean', 'max'])
+)
 
-# st.plotly_chart(fig2, use_container_width=True, config={"scrollZoom": True})
-
-# # fig_violin2 = px.violin(
-# #     media_tipo_pasto,
-# #     x="Variedade de Capim utilizada",
-# #     y="Produtividade (leite/dia/Vaca)",
-# #     box=True,
-# #     points="all",
-# #     color="Variedade de Capim utilizada",
-# #     width=1200,
-# #     height=800,
-# #     labels={
-# #         "Produtividade (leite/dia/Vaca)": "(L/dia/vaca)",
-# #         "Variedade de Capim utilizada": "Variedade de Capim"
-# #     },
-# #     title="Distribuição da Produtividade de Leite por Variedade de Capim"
-# # )
-
-# # st.plotly_chart(fig_violin2, use_container_width=True)
-
-# # Estatísticas por tipo de capim
-# st.write(
-#     filtered_gdf_media_tipo_pasto
-#     .groupby('Variedade de Capim utilizada')['Produtividade (leite/dia/Vaca)']
-#     .agg(['min', 'mean', 'max'])
-# )
-
-# st.write(
-#     filtered_gdf_media_tipo_pasto
-#     .groupby(['Variedade de Capim utilizada', 'Ano'])['Produtividade (leite/dia/Vaca)']
-#     .describe()
-# )
+st.write(
+    filtered_gdf_media_tipo_pasto
+    .groupby(['Variedade de Capim utilizada', 'Ano'])['Produtividade (leite/dia/Vaca)']
+    .describe()
+)
 
 
-# # -------- Estatísticas detalhadas por Tipo de Capim (mantido) --------
-# col_prod = "Produtividade (leite/dia/Vaca)"
-# col_capim = "Variedade de Capim utilizada"
+# -------- Estatísticas detalhadas por Tipo de Capim (mantido) --------
+col_prod = "Produtividade (leite/dia/Vaca)"
+col_capim = "Variedade de Capim utilizada"
 
-# valor_maximo = filtered_gdf_media_tipo_pasto[col_prod].max()
-# indice_maximo = filtered_gdf_media_tipo_pasto[col_prod].idxmax()
-# capim_maximo = filtered_gdf_media_tipo_pasto.loc[indice_maximo, col_capim]
+valor_maximo = filtered_gdf_media_tipo_pasto[col_prod].max()
+indice_maximo = filtered_gdf_media_tipo_pasto[col_prod].idxmax()
+capim_maximo = filtered_gdf_media_tipo_pasto.loc[indice_maximo, col_capim]
 
-# media_valor = filtered_gdf_media_tipo_pasto[col_prod].mean()
-# indice_mais_proximo_media = (filtered_gdf_media_tipo_pasto[col_prod] - media_valor).abs().idxmin()
-# capim_mais_proximo_media = filtered_gdf_media_tipo_pasto.loc[indice_mais_proximo_media, col_capim]
+media_valor = filtered_gdf_media_tipo_pasto[col_prod].mean()
+indice_mais_proximo_media = (filtered_gdf_media_tipo_pasto[col_prod] - media_valor).abs().idxmin()
+capim_mais_proximo_media = filtered_gdf_media_tipo_pasto.loc[indice_mais_proximo_media, col_capim]
 
-# st.subheader("Estatísticas por Tipo de Capim")
-# st.markdown(f"""
-# - **Valor máximo:** {valor_maximo:.2f} L/dia/vaca (Capim: **{capim_maximo}**)  
-# - **Média:** {media_valor:.2f} L/dia/vaca (Capim mais próximo da média: **{capim_mais_proximo_media}**)
-# """)
+st.subheader("Estatísticas por Tipo de Capim")
+st.markdown(f"""
+- **Valor máximo:** {valor_maximo:.2f} L/dia/vaca (Capim: **{capim_maximo}**)  
+- **Média:** {media_valor:.2f} L/dia/vaca (Capim mais próximo da média: **{capim_mais_proximo_media}**)
+""")
 
