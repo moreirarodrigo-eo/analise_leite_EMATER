@@ -171,7 +171,8 @@ fig2 = px.scatter_mapbox(
     animation_frame="Ano",
     title="Produtividade de Leite por Variedade de Capim ao Longo dos Anos"
 )
-fig2.update_traces(marker=dict(sizemin=1, sizemax=30))
+fig2.update_traces(marker=dict(sizemin=1))
+fig2.update_traces(marker=dict(sizemax=30))
 # # Add pedology layer (as fill)
 # # Create a separate trace for each ordem
 # for ordem, color in color_palette.items():
