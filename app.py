@@ -177,9 +177,7 @@ fig2 = px.scatter_mapbox(
         'lon': False
     },
     animation_frame="Ano",
-    title="Produtividade de Leite por Variedade de Capim ao Longo dos Anos",
-    category_orders={"Variedade de Capim utilizada": lista_tipos_pasto}
-)
+    title="Produtividade de Leite por Variedade de Capim ao Longo dos Anos")
 
 # Configurar para manter todas as cores na legenda mesmo quando não há dados
 fig2.update_traces(
@@ -206,15 +204,6 @@ fig2.update_layout(
         itemsizing='constant'
     )
 )
-
-# Mostrar informação sobre disponibilidade de dados
-st.info(f"""
-**Disponibilidade de dados:**
-- **Brachiaria Brizantha:** Disponível de {filtered_gdf_media_tipo_pasto[filtered_gdf_media_tipo_pasto['Variedade de Capim utilizada'] == 'Brachiaria Brizantha']['Ano'].min()} a {filtered_gdf_media_tipo_pasto[filtered_gdf_media_tipo_pasto['Variedade de Capim utilizada'] == 'Brachiaria Brizantha']['Ano'].max()}
-- **Panicum Maximum:** Disponível de {filtered_gdf_media_tipo_pasto[filtered_gdf_media_tipo_pasto['Variedade de Capim utilizada'] == 'Panicum Maximum']['Ano'].min()} a {filtered_gdf_media_tipo_pasto[filtered_gdf_media_tipo_pasto['Variedade de Capim utilizada'] == 'Panicum Maximum']['Ano'].max()}
-
-*Nota: A legenda mostra ambas as variedades, mas os pontos só aparecem nos anos onde há dados disponíveis.*
-""")
 
 st.plotly_chart(fig2, use_container_width=True, config={"scrollZoom": True})
 
