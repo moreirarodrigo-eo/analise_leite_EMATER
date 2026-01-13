@@ -9,6 +9,30 @@ import plotly.express as px
 import plotly.graph_objects as go
 import json
 
+st.set_page_config(layout="wide")
+st.title("Mapa de Produtividade de Leite por Vaca")
+st.subheader("Análises realizadas com dados providos pela EMATER - RO")
+
+# Load Data
+@st.cache_data
+def load_data_media_geral():
+    return gpd.read_file("data/STREAMLIT_media_leite_dia_Vaca_por_geom.geojson")
+
+@st.cache_data
+def load_data_media_pasto():
+    return gpd.read_file("data/STREAMLIT_media_leite_dia_Vaca_POR_TipoCapim_por_geom.geojson")
+
+@st.cache_data
+def load_pedologia():
+    return gpd.read_file("data/pedo_area_uf_ro.geojson")
+
+gdf_geral = load_data_media_geral()
+media_tipo_pasto = load_data_media_pasto()
+gdf_pedo = load_pedologia()
+
+# Convert to GeoJSON string for Choroplethmapbox
+pedology_json = json.loads(gdf_pedo.to_json())
+
 st.title("Mapa de Densidade das Observações (Oeste e Sul)")
 
 # Filtrar apenas hemisfério Oeste e Sul
@@ -50,35 +74,7 @@ st.plotly_chart(fig_density, use_container_width=True, config={"scrollZoom": Tru
  ##### Mapa por tipo de solo #### 
 ####### --------- ####### ####### --------- ####### 
 ####### --------- ####### ####### --------- ####### 
-import streamlit as st
-import geopandas as gpd
-import plotly.express as px
-import plotly.graph_objects as go
-import json
 
-st.set_page_config(layout="wide")
-st.title("Mapa de Produtividade de Leite por Vaca")
-st.subheader("Análises realizadas com dados providos pela EMATER - RO")
-
-# Load Data
-@st.cache_data
-def load_data_media_geral():
-    return gpd.read_file("data/STREAMLIT_media_leite_dia_Vaca_por_geom.geojson")
-
-@st.cache_data
-def load_data_media_pasto():
-    return gpd.read_file("data/STREAMLIT_media_leite_dia_Vaca_POR_TipoCapim_por_geom.geojson")
-
-@st.cache_data
-def load_pedologia():
-    return gpd.read_file("data/pedo_area_uf_ro.geojson")
-
-gdf_geral = load_data_media_geral()
-media_tipo_pasto = load_data_media_pasto()
-gdf_pedo = load_pedologia()
-
-# Convert to GeoJSON string for Choroplethmapbox
-pedology_json = json.loads(gdf_pedo.to_json())
 
 
 # Mapa 1: Produtividade geral
