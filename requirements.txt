@@ -1,8 +1,10 @@
-streamlit>=1.18
-geopandas>=0.13
-plotly>=5.15
-pandas>=1.5
-shapely>=2.0
-fiona>=1.9
-pyproj>=3.4
-
+streamlit>=1.28.0
+geopandas>=0.14.0
+plotly>=5.18.0
+pandas>=2.1.0
+shapely>=2.0.0
+fiona>=1.9.0
+pyproj>=3.6.0
+numpy>=1.24.0
+scipy>=1.11.0  # Para cálculos de densidade (KDE)
+scikit-learn>=1.3.0  # Para KernelDensity
