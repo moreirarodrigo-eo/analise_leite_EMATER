@@ -277,6 +277,7 @@ st.markdown(f"""
 ####### --------- ####### ####### --------- ####### 
 
 
+
 st.title("Mapa de Densidade das Observações (Oeste e Sul)")
 
 # Filtrar apenas hemisfério Oeste e Sul
@@ -312,7 +313,6 @@ fig_density.update_layout(
 )
 
 st.plotly_chart(fig_density, use_container_width=True, config={"scrollZoom": True})
-
 
 
 
