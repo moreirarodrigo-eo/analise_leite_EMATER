@@ -76,6 +76,9 @@ st.plotly_chart(fig_density, use_container_width=True, config={"scrollZoom": Tru
 ####### --------- ####### ####### --------- ####### 
 
 
+gdf_geral = load_data_media_geral()
+media_tipo_pasto = load_data_media_pasto()
+gdf_pedo = load_pedologia()
 
 # Mapa 1: Produtividade geral
 fig1 = px.scatter_mapbox(
