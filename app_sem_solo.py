@@ -1,8 +1,5 @@
-####### --------- ####### ####### --------- ####### 
-####### --------- ####### ####### --------- ####### 
- ##### Mapa de Densidade #### 
-####### --------- ####### ####### --------- ####### 
-####### --------- ####### ####### --------- ####### 
+
+
 import streamlit as st
 import geopandas as gpd
 import plotly.express as px
@@ -33,52 +30,6 @@ gdf_pedo = load_pedologia()
 # Convert to GeoJSON string for Choroplethmapbox
 pedology_json = json.loads(gdf_pedo.to_json())
 
-st.title("Mapa de Densidade das Observações (Oeste e Sul)")
-
-# Filtrar apenas hemisfério Oeste e Sul
-gdf_densidade = filtered_gdf_media_tipo_pasto[
-    (filtered_gdf_media_tipo_pasto["lon"] < 0) &
-    (filtered_gdf_media_tipo_pasto["lat"] < 0)
-].copy()
-
-fig_density = px.density_mapbox(
-    gdf_densidade,
-    lat="lat",
-    lon="lon",
-    z="Produtividade (leite/dia/Vaca)",  # peso da densidade
-    radius=20,
-    zoom=5,
-    width=1600,
-    height=1200,
-    mapbox_style="white-bg",
-    title="Densidade espacial da produtividade de leite"
-)
-
-fig_density.update_layout(
-    mapbox_layers=[
-        {
-            "below": 'traces',
-            "sourcetype": "raster",
-            "sourceattribution": "United States Geological Survey",
-            "source": [
-                "https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer/tile/{z}/{y}/{x}"
-            ]
-        }
-    ]
-)
-
-st.plotly_chart(fig_density, use_container_width=True, config={"scrollZoom": True})
-
-####### --------- ####### ####### --------- ####### 
-####### --------- ####### ####### --------- ####### 
- ##### Mapa por tipo de solo #### 
-####### --------- ####### ####### --------- ####### 
-####### --------- ####### ####### --------- ####### 
-
-
-gdf_geral = load_data_media_geral()
-media_tipo_pasto = load_data_media_pasto()
-gdf_pedo = load_pedologia()
 
 # Mapa 1: Produtividade geral
 fig1 = px.scatter_mapbox(
@@ -352,5 +303,3 @@ fig_density.update_layout(
 )
 
 st.plotly_chart(fig_density, use_container_width=True, config={"scrollZoom": True})
-
-
