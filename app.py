@@ -1,47 +1,4 @@
 
-####### --------- ####### ####### --------- ####### 
-####### --------- ####### ####### --------- ####### 
- ##### Mapa de Densidade #### 
-####### --------- ####### ####### --------- ####### 
-####### --------- ####### ####### --------- ####### 
-
-
-st.title("Mapa de Densidade das Observações (Oeste e Sul)")
-
-# Filtrar apenas hemisfério Oeste e Sul
-gdf_densidade = filtered_gdf_media_tipo_pasto[
-    (filtered_gdf_media_tipo_pasto["lon"] < 0) &
-    (filtered_gdf_media_tipo_pasto["lat"] < 0)
-].copy()
-
-fig_density = px.density_mapbox(
-    gdf_densidade,
-    lat="lat",
-    lon="lon",
-    z="Produtividade (leite/dia/Vaca)",  # peso da densidade
-    radius=20,
-    zoom=5,
-    width=1600,
-    height=1200,
-    mapbox_style="white-bg",
-    title="Densidade espacial da produtividade de leite"
-)
-
-fig_density.update_layout(
-    mapbox_layers=[
-        {
-            "below": 'traces',
-            "sourcetype": "raster",
-            "sourceattribution": "United States Geological Survey",
-            "source": [
-                "https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer/tile/{z}/{y}/{x}"
-            ]
-        }
-    ]
-)
-
-st.plotly_chart(fig_density, use_container_width=True, config={"scrollZoom": True})
-
 
 
 ####### --------- ####### ####### --------- ####### 
@@ -311,5 +268,51 @@ st.markdown(f"""
 - **Valor máximo:** {valor_maximo:.2f} L/dia/vaca (Capim: **{capim_maximo}**)  
 - **Média:** {media_valor:.2f} L/dia/vaca (Capim mais próximo da média: **{capim_mais_proximo_media}**)
 """)
+
+
+####### --------- ####### ####### --------- ####### 
+####### --------- ####### ####### --------- ####### 
+ ##### Mapa de Densidade #### 
+####### --------- ####### ####### --------- ####### 
+####### --------- ####### ####### --------- ####### 
+
+
+st.title("Mapa de Densidade das Observações (Oeste e Sul)")
+
+# Filtrar apenas hemisfério Oeste e Sul
+gdf_densidade = filtered_gdf_media_tipo_pasto[
+    (filtered_gdf_media_tipo_pasto["lon"] < 0) &
+    (filtered_gdf_media_tipo_pasto["lat"] < 0)
+].copy()
+
+fig_density = px.density_mapbox(
+    gdf_densidade,
+    lat="lat",
+    lon="lon",
+    z="Produtividade (leite/dia/Vaca)",  # peso da densidade
+    radius=20,
+    zoom=5,
+    width=1600,
+    height=1200,
+    mapbox_style="white-bg",
+    title="Densidade espacial da produtividade de leite"
+)
+
+fig_density.update_layout(
+    mapbox_layers=[
+        {
+            "below": 'traces',
+            "sourcetype": "raster",
+            "sourceattribution": "United States Geological Survey",
+            "source": [
+                "https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer/tile/{z}/{y}/{x}"
+            ]
+        }
+    ]
+)
+
+st.plotly_chart(fig_density, use_container_width=True, config={"scrollZoom": True})
+
+
 
 
