@@ -264,130 +264,43 @@ st.markdown(f"""
 """)
 
 
+############################################
+# Mapa de Densidade (Oeste e Sul)
+############################################
 
-####### --------- ####### ####### --------- ####### 
-####### --------- ####### ####### --------- ####### 
- ##### Mapa 3: Densidade de Propriedades (2019) #### 
-####### --------- ####### ####### --------- ####### 
-####### --------- ####### ####### --------- ####### 
+st.title("Mapa de Densidade das Observações (Oeste e Sul)")
 
-st.subheader("🌍 Densidade de Propriedades Leiteiras - 2019")
+# Filtrar apenas hemisfério Oeste e Sul
+gdf_densidade = filtered_gdf_media_tipo_pasto[
+    (filtered_gdf_media_tipo_pasto["lon"] < 0) &
+    (filtered_gdf_media_tipo_pasto["lat"] < 0)
+].copy()
 
-# Filtre apenas dados de 2019
-year = 2019
-year_data = gdf_geral[gdf_geral['Ano'] == year].copy()
+fig_density = px.density_mapbox(
+    gdf_densidade,
+    lat="lat",
+    lon="lon",
+    z="Produtividade (leite/dia/Vaca)",  # peso da densidade
+    radius=25,
+    zoom=5,
+    height=700,
+    mapbox_style="white-bg",
+    title="Densidade espacial da produtividade de leite"
+)
 
-if len(year_data) > 1:
-    # Calcule densidade usando método mais simples
-    from sklearn.neighbors import KernelDensity
-    
-    # Calcule densidade para cada ponto
-    coords = year_data[['lon', 'lat']].values
-    kde = KernelDensity(bandwidth=0.1, metric='haversine')
-    kde.fit(np.radians(coords))
-    
-    # Score retorna log-density, converta para densidade relativa
-    log_dens = kde.score_samples(np.radians(coords))
-    dens = np.exp(log_dens)
-    year_data['densidade'] = dens / dens.max()  # Normalize
-    
-    # Crie mapa interativo
-    fig_density_map = px.scatter_mapbox(
-        year_data,
-        lat="lat",
-        lon="lon",
-        color="densidade",
-        color_continuous_scale="RdYlBu_r",
-        size="densidade",
-        size_max=20,
-        hover_name="nome" if "nome" in year_data.columns else None,
-        hover_data={
-            "Informação_float": ":.2f",
-            "densidade": ":.3f",
-            "lat": ":.4f",
-            "lon": ":.4f"
-        },
-        zoom=6,
-        height=600,
-        title=f"Densidade de Propriedades Leiteiras - {year}",
-        labels={
-            "densidade": "Densidade Relativa",
-            "Informação_float": "Produtividade (L/dia/vaca)"
+fig_density.update_layout(
+    mapbox_layers=[
+        {
+            "below": 'traces',
+            "sourcetype": "raster",
+            "sourceattribution": "United States Geological Survey",
+            "source": [
+                "https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer/tile/{z}/{y}/{x}"
+            ]
         }
-    )
-    
-    # Adicione camada de satélite
-    fig_density_map.update_layout(
-        mapbox_style="white-bg",
-        mapbox_layers=[
-            {
-                "below": 'traces',
-                "sourcetype": "raster",
-                "sourceattribution": "United States Geological Survey",
-                "source": [
-                    "https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer/tile/{z}/{y}/{x}"
-                ]
-            }
-        ]
-    )
-    
-    st.plotly_chart(fig_density_map, use_container_width=True, config={"scrollZoom": True})
-    
-    # Mostre histograma de densidade
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        fig_hist = px.histogram(
-            year_data,
-            x="densidade",
-            nbins=20,
-            title=f"Distribuição de Densidade - {year}",
-            labels={"densidade": "Densidade Relativa", "count": "Número de Propriedades"}
-        )
-        st.plotly_chart(fig_hist, use_container_width=True)
-    
-    with col2:
-        # Scatter plot densidade vs produtividade
-        fig_scatter = px.scatter(
-            year_data,
-            x="densidade",
-            y="Informação_float",
-            hover_name="nome" if "nome" in year_data.columns else None,
-            title=f"Densidade vs Produtividade - {year}",
-            labels={
-                "densidade": "Densidade Relativa",
-                "Informação_float": "Produtividade (L/dia/vaca)"
-            },
-            trendline="ols"  # Linha de tendência
-        )
-        st.plotly_chart(fig_scatter, use_container_width=True)
-    
-    # Estatísticas
-    st.markdown(f"""
-    ### 📊 Estatísticas Detalhadas - {year}
-    
-    **Distribuição Espacial:**
-    - **Total de propriedades:** {len(year_data)}
-    - **Centro geográfico:** ({year_data['lat'].mean():.4f}°, {year_data['lon'].mean():.4f}°)
-    - **Extensão norte-sul:** {year_data['lat'].max() - year_data['lat'].min():.2f}°
-    - **Extensão leste-oeste:** {year_data['lon'].max() - year_data['lon'].min():.2f}°
-    
-    **Densidade:**
-    - **Média de densidade:** {year_data['densidade'].mean():.3f}
-    - **Máxima densidade:** {year_data['densidade'].max():.3f}
-    - **Mínima densidade:** {year_data['densidade'].min():.3f}
-    
-    **Produtividade na região mais densa (top 25%):**
-    """)
-    
-    # Analise a produtividade nas áreas mais densas
-    dens_threshold = year_data['densidade'].quantile(0.75)
-    dense_areas = year_data[year_data['densidade'] >= dens_threshold]
-    
-    if len(dense_areas) > 0:
-        st.write(f"- **Propriedades em áreas densas:** {len(dense_areas)}")
-        st.write(f"- **Produtividade média em áreas densas:** {dense_areas['Informação_float'].mean():.2f} L/dia/vaca")
-        st.write(f"- **Produtividade média em outras áreas:** {year_data[year_data['densidade'] < dens_threshold]['Informação_float'].mean():.2f} L/dia/vaca")
-    
-else:
-    st.warning(f"Não há dados suficientes para {year}.")
+    ]
+)
+
+st.plotly_chart(fig_density, use_container_width=True, config={"scrollZoom": True})
+
+
