@@ -283,7 +283,8 @@ fig_density = px.density_mapbox(
     z="Produtividade (leite/dia/Vaca)",  # peso da densidade
     radius=20,
     zoom=5,
-    height=700,
+    width=1600,
+    height=1200,
     mapbox_style="white-bg",
     title="Densidade espacial da produtividade de leite"
 )
