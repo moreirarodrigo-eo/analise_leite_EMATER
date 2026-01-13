@@ -1,5 +1,54 @@
 
+####### --------- ####### ####### --------- ####### 
+####### --------- ####### ####### --------- ####### 
+ ##### Mapa de Densidade #### 
+####### --------- ####### ####### --------- ####### 
+####### --------- ####### ####### --------- ####### 
 
+
+st.title("Mapa de Densidade das Observações (Oeste e Sul)")
+
+# Filtrar apenas hemisfério Oeste e Sul
+gdf_densidade = filtered_gdf_media_tipo_pasto[
+    (filtered_gdf_media_tipo_pasto["lon"] < 0) &
+    (filtered_gdf_media_tipo_pasto["lat"] < 0)
+].copy()
+
+fig_density = px.density_mapbox(
+    gdf_densidade,
+    lat="lat",
+    lon="lon",
+    z="Produtividade (leite/dia/Vaca)",  # peso da densidade
+    radius=20,
+    zoom=5,
+    width=1600,
+    height=1200,
+    mapbox_style="white-bg",
+    title="Densidade espacial da produtividade de leite"
+)
+
+fig_density.update_layout(
+    mapbox_layers=[
+        {
+            "below": 'traces',
+            "sourcetype": "raster",
+            "sourceattribution": "United States Geological Survey",
+            "source": [
+                "https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer/tile/{z}/{y}/{x}"
+            ]
+        }
+    ]
+)
+
+st.plotly_chart(fig_density, use_container_width=True, config={"scrollZoom": True})
+
+
+
+####### --------- ####### ####### --------- ####### 
+####### --------- ####### ####### --------- ####### 
+ ##### Mapa de distribuicao por pasto #### 
+####### --------- ####### ####### --------- ####### 
+####### --------- ####### ####### --------- ####### 
 import streamlit as st
 import geopandas as gpd
 import plotly.express as px
@@ -263,103 +312,4 @@ st.markdown(f"""
 - **Média:** {media_valor:.2f} L/dia/vaca (Capim mais próximo da média: **{capim_mais_proximo_media}**)
 """)
 
-
-
-####### --------- ####### ####### --------- ####### 
-####### --------- ####### ####### --------- ####### 
- ##### Mapa 3: Produtividade por tipo de pasto #### 
-####### --------- ####### ####### --------- ####### 
-####### --------- ####### ####### --------- ####### 
-
-import numpy as np
-from scipy.stats import gaussian_kde
-
-# Crie uma animação de densidade (heatmap) por ano
-fig_density = go.Figure()
-
-# Cores para heatmap
-colorscale = [
-    [0, 'rgba(255,255,255,0)'],
-    [0.1, 'rgba(255,255,204,0.5)'],
-    [0.3, 'rgba(255,237,160,0.7)'],
-    [0.5, 'rgba(254,217,118,0.8)'],
-    [0.7, 'rgba(254,178,76,0.9)'],
-    [0.9, 'rgba(253,141,60,1)'],
-    [1, 'rgba(240,59,32,1)']
-]
-
-# Adicione frames para cada ano
-years = sorted(gdf_geral['Ano'].unique())
-
-for year in years:
-    # Filtre dados do ano
-    year_data = gdf_geral[gdf_geral['Ano'] == year]
-    
-    if len(year_data) > 1:
-        # Calcule KDE 2D
-        x = year_data['lon'].values
-        y = year_data['lat'].values
-        
-        # Crie grid para o heatmap
-        xi = np.linspace(gdf_geral['lon'].min(), gdf_geral['lon'].max(), 50)
-        yi = np.linspace(gdf_geral['lat'].min(), gdf_geral['lat'].max(), 50)
-        xi, yi = np.meshgrid(xi, yi)
-        
-        # Calcule KDE
-        try:
-            # Para dados reais, use esta abordagem
-            xy = np.vstack([x, y])
-            kde = gaussian_kde(xy)
-            zi = kde(np.vstack([xi.flatten(), yi.flatten()]))
-            zi = zi.reshape(xi.shape)
-            
-            frame = go.Frame(
-                data=[go.Contour(
-                    x=xi[0],
-                    y=yi[:, 0],
-                    z=zi,
-                    colorscale=colorscale,
-                    showscale=True,
-                    contours=dict(
-                        showlines=False,
-                        coloring='heatmap'
-                    ),
-                    hovertemplate="<b>Densidade de Propriedades</b><br>" +
-                                 "Longitude: %{x:.4f}<br>" +
-                                 "Latitude: %{y:.4f}<br>" +
-                                 "Densidade: %{z:.4f}<extra></extra>"
-                )],
-                name=str(year)
-            )
-            fig_density.add_trace(frame.data[0])
-        except:
-            continue
-
-# Configure a animação
-fig_density.update_layout(
-    title="Evolução da Densidade de Propriedades Leiteiras (Animado)",
-    xaxis_title="Longitude",
-    yaxis_title="Latitude",
-    height=600,
-    updatemenus=[{
-        "type": "buttons",
-        "buttons": [
-            {
-                "label": "▶️ Play",
-                "method": "animate",
-                "args": [None, {"frame": {"duration": 1000, "redraw": True}, "fromcurrent": True}]
-            },
-            {
-                "label": "⏸️ Pause",
-                "method": "animate",
-                "args": [[None], {"frame": {"duration": 0, "redraw": True}, "mode": "immediate"}]
-            }
-        ]
-    }]
-)
-
-fig_density.frames = [go.Frame(data=[fig_density.data[i]], name=str(year)) 
-                      for i, year in enumerate(years)]
-
-st.plotly_chart(fig_density, use_container_width=True)
 
