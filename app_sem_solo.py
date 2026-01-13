@@ -3,7 +3,11 @@
  ##### Mapa de Densidade #### 
 ####### --------- ####### ####### --------- ####### 
 ####### --------- ####### ####### --------- ####### 
-
+import streamlit as st
+import geopandas as gpd
+import plotly.express as px
+import plotly.graph_objects as go
+import json
 
 st.title("Mapa de Densidade das Observações (Oeste e Sul)")
 
