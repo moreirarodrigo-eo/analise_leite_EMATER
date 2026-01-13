@@ -52,53 +52,53 @@ fig1 = px.scatter_mapbox(
 )
 
 
-# # Filter to include only ARGISSOLO and LATOSSOLO
-# #filtered_gdf = gdf_pedo[gdf_pedo['ordem'].isin(['ARGISSOLO', 'LATOSSOLO'])].copy()
+# # # Filter to include only ARGISSOLO and LATOSSOLO
+# # #filtered_gdf = gdf_pedo[gdf_pedo['ordem'].isin(['ARGISSOLO', 'LATOSSOLO'])].copy()
 
 
-# Start with your specific colors
-color_palette = {
-    'ARGISSOLO': '#1f77b4',
-    'LATOSSOLO': '#ff7f0e',
-    'NEOSSOLO': '#2ca02c',
-    'CAMBISSOLO': '#d62728',
-    'GLEISSOLO': '#9467bd',
-    'PLINTOSSOLO': '#8c564b',
-    'ESPODOSSOLO': '#e377c2',
-    'CHERNOSSOLO': '#7f7f7f',
-    'VERTISSOLO': '#bcbd22',
-    'LUVISSOLO': '#17becf'
-}
+# # Start with your specific colors
+# color_palette = {
+#     'ARGISSOLO': '#1f77b4',
+#     'LATOSSOLO': '#ff7f0e',
+#     'NEOSSOLO': '#2ca02c',
+#     'CAMBISSOLO': '#d62728',
+#     'GLEISSOLO': '#9467bd',
+#     'PLINTOSSOLO': '#8c564b',
+#     'ESPODOSSOLO': '#e377c2',
+#     'CHERNOSSOLO': '#7f7f7f',
+#     'VERTISSOLO': '#bcbd22',
+#     'LUVISSOLO': '#17becf'
+# }
 
-# Get all unique ordem values
-unique_ordens = gdf_pedo['ordem'].unique()
+# # Get all unique ordem values
+# unique_ordens = gdf_pedo['ordem'].unique()
 
-# Add colors for any missing ordens
-extra_colors = px.colors.qualitative.Alphabet  # Extended color palette
-missing_ordens = [ordem for ordem in unique_ordens if ordem not in color_palette]
+# # Add colors for any missing ordens
+# extra_colors = px.colors.qualitative.Alphabet  # Extended color palette
+# missing_ordens = [ordem for ordem in unique_ordens if ordem not in color_palette]
 
-for i, ordem in enumerate(missing_ordens):
-    color_palette[ordem] = extra_colors[i % len(extra_colors)]
+# for i, ordem in enumerate(missing_ordens):
+#     color_palette[ordem] = extra_colors[i % len(extra_colors)]
 
-# Create a separate trace for each ordem
-for ordem, color in color_palette.items():
-    if ordem in unique_ordens:  # Only create trace if this ordem exists in data
-        ordem_gdf = gdf_pedo[gdf_pedo['ordem'] == ordem]
+# # Create a separate trace for each ordem
+# for ordem, color in color_palette.items():
+#     if ordem in unique_ordens:  # Only create trace if this ordem exists in data
+#         ordem_gdf = gdf_pedo[gdf_pedo['ordem'] == ordem]
         
-        if not ordem_gdf.empty:
-            fig1.add_trace(go.Choroplethmapbox(
-                geojson=pedology_json,
-                locations=ordem_gdf.index,
-                z=[1] * len(ordem_gdf),
-                colorscale=[(0, color), (1, color)],
-                showscale=False,
-                marker_opacity=0.6,
-                marker_line_width=1,
-                marker_line_color='black',
-                hovertemplate=f"<b>Ordem</b>: {ordem}<br><b>Subordem</b>: %{{customdata[0]}}<extra></extra>",
-                customdata=ordem_gdf[['subordem']],
-                name=ordem,
-            ))
+#         if not ordem_gdf.empty:
+#             fig1.add_trace(go.Choroplethmapbox(
+#                 geojson=pedology_json,
+#                 locations=ordem_gdf.index,
+#                 z=[1] * len(ordem_gdf),
+#                 colorscale=[(0, color), (1, color)],
+#                 showscale=False,
+#                 marker_opacity=0.6,
+#                 marker_line_width=1,
+#                 marker_line_color='black',
+#                 hovertemplate=f"<b>Ordem</b>: {ordem}<br><b>Subordem</b>: %{{customdata[0]}}<extra></extra>",
+#                 customdata=ordem_gdf[['subordem']],
+#                 name=ordem,
+#             ))
 
 
 fig1.update_layout(
@@ -177,26 +177,26 @@ fig2 = px.scatter_mapbox(
 fig2.update_traces(marker=dict(sizemin=4))
 
 
-# Add pedology layer (as fill)
-# Create a separate trace for each ordem
-for ordem, color in color_palette.items():
-    if ordem in unique_ordens:  # Only create trace if this ordem exists in data
-        ordem_gdf = gdf_pedo[gdf_pedo['ordem'] == ordem]
+# # Add pedology layer (as fill)
+# # Create a separate trace for each ordem
+# for ordem, color in color_palette.items():
+#     if ordem in unique_ordens:  # Only create trace if this ordem exists in data
+#         ordem_gdf = gdf_pedo[gdf_pedo['ordem'] == ordem]
         
-        if not ordem_gdf.empty:
-            fig2.add_trace(go.Choroplethmapbox(
-                geojson=pedology_json,
-                locations=ordem_gdf.index,
-                z=[1] * len(ordem_gdf),
-                colorscale=[(0, color), (1, color)],
-                showscale=False,
-                marker_opacity=0.6,
-                marker_line_width=1,
-                marker_line_color='black',
-                hovertemplate=f"<b>Ordem</b>: {ordem}<br><b>Subordem</b>: %{{customdata[0]}}<extra></extra>",
-                customdata=ordem_gdf[['subordem']],
-                name=ordem,
-            ))
+#         if not ordem_gdf.empty:
+#             fig2.add_trace(go.Choroplethmapbox(
+#                 geojson=pedology_json,
+#                 locations=ordem_gdf.index,
+#                 z=[1] * len(ordem_gdf),
+#                 colorscale=[(0, color), (1, color)],
+#                 showscale=False,
+#                 marker_opacity=0.6,
+#                 marker_line_width=1,
+#                 marker_line_color='black',
+#                 hovertemplate=f"<b>Ordem</b>: {ordem}<br><b>Subordem</b>: %{{customdata[0]}}<extra></extra>",
+#                 customdata=ordem_gdf[['subordem']],
+#                 name=ordem,
+#             ))
 
 fig2.update_layout(
     mapbox_style="white-bg",
